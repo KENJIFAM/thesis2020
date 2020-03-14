@@ -3,16 +3,23 @@ import ReactDOM from 'react-dom';
 import { CssBaseline } from '@material-ui/core';
 import { ThemeProvider } from '@material-ui/core/styles';
 import theme from './styles/theme';
+import ReduxRoot from './ReduxRoot';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
 
+const AppWithStyles = () => (
+  <ThemeProvider theme={theme}>
+    <CssBaseline />
+    <App />
+  </ThemeProvider>
+);
+
 ReactDOM.render(
-  <React.StrictMode>
-    <ThemeProvider theme={theme}>
-      <CssBaseline />
-      <App />
-    </ThemeProvider>
-  </React.StrictMode>,
+  <ReduxRoot>
+    <React.StrictMode>
+      <AppWithStyles />
+    </React.StrictMode>
+  </ReduxRoot>,
   document.getElementById('root'),
 );
 
