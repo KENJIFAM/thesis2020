@@ -12,6 +12,7 @@ import {
   Drawer,
   Theme,
   Typography,
+  Button,
 } from '@material-ui/core';
 import Menu from '@material-ui/icons/Menu';
 
@@ -25,7 +26,7 @@ const Navbar = () => {
     <List className={classes.list}>
       <ListItem className={classes.listItem}>
         <Link className={classes.link} href="/">
-          News
+          Home
         </Link>
       </ListItem>
       <ListItem className={classes.listItem}>
@@ -42,6 +43,16 @@ const Navbar = () => {
         <Link className={classes.link} href="/about">
           About us
         </Link>
+      </ListItem>
+      <ListItem className={classes.listItem}>
+        <Button variant="outlined" color="primary">
+          Log in
+        </Button>
+      </ListItem>
+      <ListItem className={classes.listItem}>
+        <Button variant="contained" color="primary">
+          Sign up
+        </Button>
       </ListItem>
     </List>
   );
@@ -147,6 +158,8 @@ const useStyles = makeStyles((theme: Theme) =>
       padding: 0,
       listStyle: 'none',
       color: 'inherit',
+      display: 'flex',
+      alignItems: 'center',
     },
     listItem: {
       float: 'left',
