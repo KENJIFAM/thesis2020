@@ -8,7 +8,7 @@ const theme = createMuiTheme({
         body: {
           margin: 0,
           fontFamily: `-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu',
-                'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif`,
+            'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif`,
           '-webkit-font-smoothing': 'antialiased',
           '-moz-osx-font-smoothing': 'grayscale',
           fontSize: 16,
@@ -22,6 +22,10 @@ const theme = createMuiTheme({
   },
   palette: {
     primary: indigo,
+  },
+  typography: {
+    fontFamily: `-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu',
+      'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif`,
   },
 });
 
