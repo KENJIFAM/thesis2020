@@ -62,7 +62,7 @@ const Navbar = () => {
       <AppBar className={classes.appBar}>
         <Toolbar className={classes.container}>
           <Link href="/" className={classes.link}>
-            <Typography variant="h4" color="primary">
+            <Typography variant="h4" color="primary" className={classes.brand}>
               Food Help
             </Typography>
           </Link>
@@ -183,6 +183,9 @@ const useStyles = makeStyles((theme: Theme) =>
         color: theme.palette.primary.main,
         textDecoration: 'none',
       },
+    },
+    brand: {
+      fontWeight: 'bold',
     },
   }),
 );
