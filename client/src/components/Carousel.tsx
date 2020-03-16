@@ -61,7 +61,7 @@ const Carousel = ({ data = tutorialSteps, autoInterval }: Props) => {
       }, autoInterval);
       return () => clearInterval(interval);
     }
-  }, []);
+  }, [autoInterval, maxSteps]);
 
   const handleNext = () => {
     setActiveStep((prevActiveStep) => prevActiveStep + 1);
@@ -87,6 +87,11 @@ const Carousel = ({ data = tutorialSteps, autoInterval }: Props) => {
           position="static"
           variant="dots"
           activeStep={activeStep}
+          classes={{
+            root: classes.stepperRoot,
+            dot: classes.stepperDot,
+          }}
+          backButton={null}
           nextButton={
             <ButtonGroup size="small">
               <Button size="small" onClick={handleBack} disabled={activeStep === 0}>
@@ -97,11 +102,14 @@ const Carousel = ({ data = tutorialSteps, autoInterval }: Props) => {
               </Button>
             </ButtonGroup>
           }
-          backButton={null}
         />
         <Box className={classes.textAreaContent}>
-          <Typography variant="h5">{data[activeStep].title}</Typography>
-          <Typography>{data[activeStep].description}</Typography>
+          <Typography variant="h5" className={classes.title}>
+            {data[activeStep].title}
+          </Typography>
+          <Typography variant="body2" className={classes.description}>
+            {data[activeStep].description}
+          </Typography>
         </Box>
       </Box>
     </Box>
@@ -180,6 +188,12 @@ const useStyles = makeStyles((theme: Theme) =>
       marginLeft: -1,
     },
     description: {},
+    stepperRoot: {
+      backgroundColor: theme.palette.background.paper,
+    },
+    stepperDot: {
+      margin: theme.spacing(0, 1),
+    },
   }),
 );
 
