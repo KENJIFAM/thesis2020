@@ -158,8 +158,10 @@ const useStyles = makeStyles((theme: Theme) =>
       padding: 0,
       listStyle: 'none',
       color: 'inherit',
-      display: 'flex',
       alignItems: 'center',
+      [theme.breakpoints.up('md')]: {
+        display: 'flex',
+      },
     },
     listItem: {
       float: 'left',
