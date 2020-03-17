@@ -2,6 +2,7 @@ import React from 'react';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import Box from '@material-ui/core/Box';
 import Carousel from '../../components/Carousel';
+import Partners from './Partners';
 import { news } from '../../services/mocks';
 
 const Home = () => {
@@ -10,6 +11,7 @@ const Home = () => {
   return (
     <Box className={classes.container}>
       <Carousel data={news} autoInterval={3000} />
+      <Partners />
     </Box>
   );
 };
