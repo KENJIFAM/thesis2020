@@ -3,39 +3,6 @@ import { makeStyles, Theme, createStyles } from '@material-ui/core/styles';
 import { Typography, MobileStepper, ButtonGroup, Button, Box } from '@material-ui/core';
 import { KeyboardArrowLeft, KeyboardArrowRight } from '@material-ui/icons';
 
-const tutorialSteps = [
-  {
-    title: 'San Francisco',
-    description: 'Oakland Bay Bridge, United States',
-    imgPath:
-      'https://images.unsplash.com/photo-1537944434965-cf4679d1a598?auto=format&fit=crop&w=400&h=250&q=60',
-  },
-  {
-    title: 'Bird',
-    description: '',
-    imgPath:
-      'https://images.unsplash.com/photo-1538032746644-0212e812a9e7?auto=format&fit=crop&w=400&h=250&q=60',
-  },
-  {
-    title: 'Bali, Indonesia',
-    description: 'Bali, Indonesia Bali, Indonesia',
-    imgPath:
-      'https://images.unsplash.com/photo-1537996194471-e657df975ab4?auto=format&fit=crop&w=400&h=250&q=80',
-  },
-  {
-    title: 'NeONBRAND',
-    description: 'Digital Marketing, Las Vegas, United States',
-    imgPath:
-      'https://images.unsplash.com/photo-1518732714860-b62714ce0c59?auto=format&fit=crop&w=400&h=250&q=60',
-  },
-  {
-    title: 'Goč, Serbia',
-    description: 'Goč, SerbiaGoč, SerbiaGoč, SerbiaGoč, Serbia',
-    imgPath:
-      'https://images.unsplash.com/photo-1512341689857-198e7e2f3ca8?auto=format&fit=crop&w=400&h=250&q=60',
-  },
-];
-
 interface Step {
   title: string;
   description: string;
@@ -43,13 +10,13 @@ interface Step {
 }
 
 interface OwnProps {
-  data?: Step[];
+  data: Step[];
   autoInterval?: number;
 }
 
 type Props = OwnProps;
 
-const Carousel = ({ data = tutorialSteps, autoInterval }: Props) => {
+const Carousel = ({ data, autoInterval }: Props) => {
   const classes = useStyles();
   const [activeStep, setActiveStep] = useState(0);
   const maxSteps = data.length;
@@ -91,23 +58,32 @@ const Carousel = ({ data = tutorialSteps, autoInterval }: Props) => {
             root: classes.stepperRoot,
             dot: classes.stepperDot,
           }}
-          backButton={null}
+          backButton={
+            <Button
+              size="small"
+              variant="outlined"
+              onClick={handleBack}
+              disabled={activeStep === 0}
+            >
+              <KeyboardArrowLeft />
+            </Button>
+          }
           nextButton={
-            <ButtonGroup size="small">
-              <Button size="small" onClick={handleBack} disabled={activeStep === 0}>
-                <KeyboardArrowLeft />
-              </Button>
-              <Button onClick={handleNext} disabled={activeStep === maxSteps - 1}>
-                <KeyboardArrowRight />
-              </Button>
-            </ButtonGroup>
+            <Button
+              size="small"
+              variant="outlined"
+              onClick={handleNext}
+              disabled={activeStep === maxSteps - 1}
+            >
+              <KeyboardArrowRight />
+            </Button>
           }
         />
         <Box className={classes.textAreaContent}>
           <Typography variant="h5" className={classes.title}>
             {data[activeStep].title}
           </Typography>
-          <Typography variant="body2" className={classes.description}>
+          <Typography variant="body1" className={classes.description}>
             {data[activeStep].description}
           </Typography>
         </Box>
@@ -128,6 +104,10 @@ const useStyles = makeStyles((theme: Theme) =>
       boxShadow: '0 1px 4px 0 rgba(32,33,37,0.06)',
       borderRadius: 4,
       marginBottom: 44,
+      [theme.breakpoints.down('sm')]: {
+        paddingTop: '40%',
+        marginBottom: 30,
+      },
     },
     imgContainer: {
       position: 'absolute',
@@ -138,6 +118,13 @@ const useStyles = makeStyles((theme: Theme) =>
       overflow: 'hidden',
       borderRadius: '4px 0 0 4px',
       touchAction: 'pan-y pinch-zoom',
+      [theme.breakpoints.down('sm')]: {
+        width: '100%',
+        borderRadius: 4,
+      },
+      [theme.breakpoints.down('xs')]: {
+        borderRadius: 0,
+      },
     },
     imgInnerContainer: {
       width: '100%',
@@ -152,6 +139,7 @@ const useStyles = makeStyles((theme: Theme) =>
       backgroundSize: 'cover',
       backgroundRepeat: 'no-repeat',
       backgroundPosition: 'center',
+      transition: 'opacity 0.3s linear',
       // borderRadius: '4px 0 0 4px',
     },
     textArea: {
@@ -164,25 +152,37 @@ const useStyles = makeStyles((theme: Theme) =>
       border: `1px solid ${theme.palette.divider}`,
       borderRadius: '0 4px 4px 0',
       borderLeft: 'none',
-      '-webkit-user-select': 'none',
-      '-moz-user-select': 'none',
-      '-ms-user-select': 'none',
       userSelect: 'none',
       display: 'flex',
-      '-webkit-box-orient': 'vertical',
-      '-webkit-box-direction': 'normal',
-      '-ms-flex-direction': 'column',
       flexDirection: 'column',
-      '-webkit-perspective': 100,
-      perspective: 100,
-      '-webkit-perspective-origin': '-50%',
-      perspectiveOrigin: '-50%',
+      [theme.breakpoints.down('sm')]: {
+        left: 0,
+        padding: theme.spacing(3, 2),
+        border: 'none',
+        pointerEvents: 'none',
+        '&::before': {
+          content: '""',
+          borderRadius: 4,
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          backgroundImage:
+            'linear-gradient(-180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0.06) 30%, rgba(0,0,0,0.14) 50%, rgba(0,0,0,0.27) 70%, rgba(0,0,0,0.41) 90%, rgba(0,0,0,0.48) 100%)',
+        },
+      },
     },
     textAreaContent: {
       display: 'flex',
       flex: '1 1 auto',
       flexDirection: 'column',
       justifyContent: 'center',
+      [theme.breakpoints.down('sm')]: {
+        color: theme.palette.common.white,
+        justifyContent: 'flex-end',
+        transform: 'translate3d(0px, 0px, 0px)',
+      },
     },
     title: {
       marginLeft: -1,
@@ -190,6 +190,16 @@ const useStyles = makeStyles((theme: Theme) =>
     description: {},
     stepperRoot: {
       backgroundColor: theme.palette.background.paper,
+      padding: 0,
+      [theme.breakpoints.down('sm')]: {
+        backgroundColor: theme.palette.background.default,
+        padding: theme.spacing(1),
+        position: 'absolute',
+        width: '100%',
+        bottom: -50,
+        left: 0,
+        pointerEvents: 'auto',
+      },
     },
     stepperDot: {
       margin: theme.spacing(0, 1),

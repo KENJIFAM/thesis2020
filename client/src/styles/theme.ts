@@ -12,7 +12,7 @@ const theme = createMuiTheme({
           '-webkit-font-smoothing': 'antialiased',
           '-moz-osx-font-smoothing': 'grayscale',
           fontSize: 16,
-          backgroundColor: '#fcfcfc',
+          backgroundColor: '#fafafa',
         },
         '*': {
           boxSizing: 'border-box',
@@ -28,5 +28,6 @@ const theme = createMuiTheme({
       'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif`,
   },
 });
+console.log(theme);
 
 export default theme;
