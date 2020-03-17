@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { makeStyles, Theme, createStyles } from '@material-ui/core/styles';
-import { Typography, MobileStepper, ButtonGroup, Button, Box } from '@material-ui/core';
+import { Typography, MobileStepper, Button, Box } from '@material-ui/core';
 import { KeyboardArrowLeft, KeyboardArrowRight } from '@material-ui/icons';
 
-interface Step {
+export interface Step {
   title: string;
   description: string;
   imgPath: string;
@@ -106,7 +106,7 @@ const useStyles = makeStyles((theme: Theme) =>
       marginBottom: 44,
       [theme.breakpoints.down('sm')]: {
         paddingTop: '40%',
-        marginBottom: 30,
+        marginBottom: 70,
       },
     },
     imgContainer: {
@@ -190,15 +190,17 @@ const useStyles = makeStyles((theme: Theme) =>
     description: {},
     stepperRoot: {
       backgroundColor: theme.palette.background.paper,
-      padding: 0,
+      padding: theme.spacing(1, 0),
       [theme.breakpoints.down('sm')]: {
         backgroundColor: theme.palette.background.default,
-        padding: theme.spacing(1),
         position: 'absolute',
         width: '100%',
         bottom: -50,
         left: 0,
         pointerEvents: 'auto',
+      },
+      [theme.breakpoints.down('xs')]: {
+        padding: theme.spacing(1),
       },
     },
     stepperDot: {

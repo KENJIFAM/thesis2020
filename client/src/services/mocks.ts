@@ -1,34 +1,97 @@
+import { Step } from '../components/Carousel';
+import faker from 'faker';
+
+export const capitalize = (str: string) => str.replace(/^./, str[0].toUpperCase());
+
 export const users: string[] = ['u1', 'u2'];
 
-export const news = [
+export const news: Step[] = [
   {
-    title: 'San Francisco',
-    description: 'Oakland Bay Bridge, United States',
-    imgPath:
-      'https://images.unsplash.com/photo-1537944434965-cf4679d1a598?auto=format&fit=crop&w=400&h=250&q=60',
+    title: capitalize(faker.random.words(faker.random.number(5) + 1)),
+    description: faker.lorem.sentence(),
+    imgPath: faker.image.imageUrl(640, 480, 'food', true, true),
   },
   {
-    title: 'Bird',
-    description: '',
-    imgPath:
-      'https://images.unsplash.com/photo-1538032746644-0212e812a9e7?auto=format&fit=crop&w=400&h=250&q=60',
+    title: capitalize(faker.random.words(faker.random.number(5) + 1)),
+    description: faker.lorem.sentence(),
+    imgPath: faker.image.imageUrl(640, 480, 'food', true, true),
   },
   {
-    title: 'Bali, Indonesia',
-    description: 'Bali, Indonesia Bali, Indonesia',
-    imgPath:
-      'https://images.unsplash.com/photo-1537996194471-e657df975ab4?auto=format&fit=crop&w=400&h=250&q=80',
+    title: capitalize(faker.random.words(faker.random.number(5) + 1)),
+    description: faker.lorem.sentence(),
+    imgPath: faker.image.imageUrl(640, 480, 'food', true, true),
   },
   {
-    title: 'NeONBRAND',
-    description: 'Digital Marketing, Las Vegas, United States',
-    imgPath:
-      'https://images.unsplash.com/photo-1518732714860-b62714ce0c59?auto=format&fit=crop&w=400&h=250&q=60',
+    title: capitalize(faker.random.words(faker.random.number(5) + 1)),
+    description: faker.lorem.sentence(),
+    imgPath: faker.image.imageUrl(640, 480, 'food', true, true),
   },
   {
-    title: 'Goč, Serbia',
-    description: 'Goč, SerbiaGoč, SerbiaGoč, SerbiaGoč, Serbia',
-    imgPath:
-      'https://images.unsplash.com/photo-1512341689857-198e7e2f3ca8?auto=format&fit=crop&w=400&h=250&q=60',
+    title: capitalize(faker.random.words(faker.random.number(5) + 1)),
+    description: faker.lorem.sentence(),
+    imgPath: faker.image.imageUrl(640, 480, 'food', true, true),
+  },
+];
+
+export const supermarkets = [
+  {
+    city: 'Espoo',
+    name: 'K-CITYMARKET Sello',
+    description: faker.lorem.sentence(),
+    image:
+      'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a0/K-Citymarket_logo_2016.svg/1024px-K-Citymarket_logo_2016.svg.png',
+    location: [24.941325187683105, 60.169938852212965],
+  },
+  {
+    city: 'Helsinki',
+    name: 'PRISMA Tripla',
+    description: faker.lorem.sentence(),
+    image: 'https://www.prisma.fi/wcsstore/SOK_Aurora/img/logos/prisma/logo.svg',
+    location: [24.941325187683105, 60.169938852212965],
+  },
+  {
+    city: 'Espoo',
+    name: 'K-CITYMARKET Iso Omena',
+    description: faker.lorem.sentence(),
+    image:
+      'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a0/K-Citymarket_logo_2016.svg/1024px-K-Citymarket_logo_2016.svg.png',
+    location: [24.941325187683105, 60.169938852212965],
+  },
+  {
+    city: 'Helsinki',
+    name: 'PRISMA Malmi',
+    description: faker.lorem.sentence(),
+    image: 'https://www.prisma.fi/wcsstore/SOK_Aurora/img/logos/prisma/logo.svg',
+    location: [24.941325187683105, 60.169938852212965],
+  },
+  {
+    city: 'Espoo',
+    name: 'K-CITYMARKET Sello',
+    description: faker.lorem.sentence(),
+    image:
+      'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a0/K-Citymarket_logo_2016.svg/1024px-K-Citymarket_logo_2016.svg.png',
+    location: [24.941325187683105, 60.169938852212965],
+  },
+  {
+    city: 'Helsinki',
+    name: 'PRISMA Tripla',
+    description: faker.lorem.sentence(),
+    image: 'https://www.prisma.fi/wcsstore/SOK_Aurora/img/logos/prisma/logo.svg',
+    location: [24.941325187683105, 60.169938852212965],
+  },
+  {
+    city: 'Espoo',
+    name: 'K-CITYMARKET Iso Omena',
+    description: faker.lorem.sentence(),
+    image:
+      'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a0/K-Citymarket_logo_2016.svg/1024px-K-Citymarket_logo_2016.svg.png',
+    location: [24.941325187683105, 60.169938852212965],
+  },
+  {
+    city: 'Helsinki',
+    name: 'PRISMA Malmi',
+    description: faker.lorem.sentence(),
+    image: 'https://www.prisma.fi/wcsstore/SOK_Aurora/img/logos/prisma/logo.svg',
+    location: [24.941325187683105, 60.169938852212965],
   },
 ];
