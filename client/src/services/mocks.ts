@@ -35,14 +35,17 @@ export const news: Step[] = [
 
 export const supermarkets = [
   {
+    id: faker.random.uuid(),
     city: 'Espoo',
     name: 'K-CITYMARKET Sello',
     description: faker.lorem.sentence(),
     image:
       'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a0/K-Citymarket_logo_2016.svg/1024px-K-Citymarket_logo_2016.svg.png',
+    containedImage: true,
     location: [24.941325187683105, 60.169938852212965],
   },
   {
+    id: faker.random.uuid(),
     city: 'Helsinki',
     name: 'PRISMA Tripla',
     description: faker.lorem.sentence(),
@@ -50,14 +53,17 @@ export const supermarkets = [
     location: [24.941325187683105, 60.169938852212965],
   },
   {
+    id: faker.random.uuid(),
     city: 'Espoo',
     name: 'K-CITYMARKET Iso Omena',
     description: faker.lorem.sentence(),
     image:
       'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a0/K-Citymarket_logo_2016.svg/1024px-K-Citymarket_logo_2016.svg.png',
+    containedImage: true,
     location: [24.941325187683105, 60.169938852212965],
   },
   {
+    id: faker.random.uuid(),
     city: 'Helsinki',
     name: 'PRISMA Malmi',
     description: faker.lorem.sentence(),
@@ -65,14 +71,17 @@ export const supermarkets = [
     location: [24.941325187683105, 60.169938852212965],
   },
   {
+    id: faker.random.uuid(),
     city: 'Espoo',
     name: 'K-CITYMARKET Sello',
     description: faker.lorem.sentence(),
     image:
       'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a0/K-Citymarket_logo_2016.svg/1024px-K-Citymarket_logo_2016.svg.png',
+    containedImage: true,
     location: [24.941325187683105, 60.169938852212965],
   },
   {
+    id: faker.random.uuid(),
     city: 'Helsinki',
     name: 'PRISMA Tripla',
     description: faker.lorem.sentence(),
@@ -80,14 +89,17 @@ export const supermarkets = [
     location: [24.941325187683105, 60.169938852212965],
   },
   {
+    id: faker.random.uuid(),
     city: 'Espoo',
     name: 'K-CITYMARKET Iso Omena',
     description: faker.lorem.sentence(),
     image:
       'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a0/K-Citymarket_logo_2016.svg/1024px-K-Citymarket_logo_2016.svg.png',
+    containedImage: true,
     location: [24.941325187683105, 60.169938852212965],
   },
   {
+    id: faker.random.uuid(),
     city: 'Helsinki',
     name: 'PRISMA Malmi',
     description: faker.lorem.sentence(),

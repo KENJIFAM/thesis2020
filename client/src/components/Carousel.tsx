@@ -9,12 +9,10 @@ export interface Step {
   imgPath: string;
 }
 
-interface OwnProps {
+interface Props {
   data: Step[];
   autoInterval?: number;
 }
-
-type Props = OwnProps;
 
 const Carousel = ({ data, autoInterval }: Props) => {
   const classes = useStyles();
