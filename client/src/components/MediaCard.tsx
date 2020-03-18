@@ -43,6 +43,7 @@ const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {
       maxWidth: '100%',
+      height: '100%',
       [theme.breakpoints.down('xs')]: {
         borderRadius: 0,
       },
