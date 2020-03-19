@@ -15,12 +15,20 @@ import {
   Button,
 } from '@material-ui/core';
 import Menu from '@material-ui/icons/Menu';
+import AuthDialog from '../../components/AuthDialog';
 
 const Navbar = () => {
-  const [mobileOpen, setMobileOpen] = useState<boolean>(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const [authOpen, setAuthOpen] = useState(true);
+  const [isSignUp, setIsSignUp] = useState(false);
   const classes = useStyles();
 
   const handleDrawerToggle = () => setMobileOpen(!mobileOpen);
+
+  const openAuthDialog = (isSignUp: boolean = false) => {
+    setIsSignUp(isSignUp);
+    setAuthOpen(true);
+  };
 
   const renderLinks = () => (
     <List className={classes.list}>
@@ -45,12 +53,12 @@ const Navbar = () => {
         </Link>
       </ListItem>
       <ListItem className={classes.listItem}>
-        <Button variant="outlined" color="primary">
+        <Button variant="outlined" color="primary" onClick={() => openAuthDialog()}>
           Log in
         </Button>
       </ListItem>
       <ListItem className={classes.listItem}>
-        <Button variant="contained" color="primary">
+        <Button variant="contained" color="primary" onClick={() => openAuthDialog(true)}>
           Sign up
         </Button>
       </ListItem>
@@ -89,6 +97,7 @@ const Navbar = () => {
           </Drawer>
         </Hidden>
       </AppBar>
+      <AuthDialog open={authOpen} isSignUp={isSignUp} onClose={() => setAuthOpen(false)} />
     </Box>
   );
 };
