@@ -16,9 +16,7 @@ const AppWithStyles = () => (
 
 ReactDOM.render(
   <ReduxRoot>
-    <React.StrictMode>
-      <AppWithStyles />
-    </React.StrictMode>
+    <AppWithStyles />
   </ReduxRoot>,
   document.getElementById('root'),
 );
