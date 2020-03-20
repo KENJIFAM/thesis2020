@@ -32,32 +32,32 @@ const orgTypes = [
   { value: 'BUSINESS', label: 'Restaurant & Cafeteria' },
 ];
 
-const validateFormField = (name: string, formField: FormFieldProps<string>): boolean => {
+const validateFormField = (name: string, value: string): string => {
   switch (name) {
     case 'email':
-      const validEmail = isValidEmail(formField.value);
-      formField.setError(!validEmail ? `${formField.value} is not a valid email` : '');
-      return validEmail;
+      const validEmail = isValidEmail(value);
+      return !validEmail ? `${value} is not a valid email` : '';
     case 'password':
-      const validPassword = formField.value.length >= 6;
-      formField.setError(!validPassword ? 'Password must be at least 6 characters' : '');
-      return validPassword;
+      const validPassword = value.length >= 6;
+      return !validPassword ? 'Password must be at least 6 characters' : '';
     case 'orgType':
-      const validOrgType = Boolean(formField.value);
-      formField.setError(!validOrgType ? 'Please select your organization type' : '');
-      return validOrgType;
+      const validOrgType = Boolean(value);
+      return !validOrgType ? 'Please select your organization type' : '';
     case 'orgName':
-      const validOrgName = formField.value.length >= 3 || formField.value.length <= 100;
-      formField.setError(!validOrgName ? 'Organization name must be 3-100 characters' : '');
-      return validOrgName;
+      const validOrgName = value.length >= 3 || value.length <= 100;
+      return !validOrgName ? 'Organization name must be 3-100 characters' : '';
     default:
-      return true;
+      return '';
   }
 };
 
 const validateForm = (form: AuthForm) =>
   Object.entries(form)
-    .map(([name, field]) => validateFormField(name, field))
+    .map(([name, field]) => {
+      const error = validateFormField(name, field.value);
+      field.setError(error);
+      return !error;
+    })
     .reduce((res, field) => res && field, true);
 
 const AuthDialog = ({ open, onClose, isSignUp }: Props) => {
@@ -74,11 +74,9 @@ const AuthDialog = ({ open, onClose, isSignUp }: Props) => {
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
     const { value, name } = e.target;
-    console.log(value);
-
     formField.handleChange(value);
     if (formField.error && value) {
-      validateFormField(name, formField);
+      formField.setError(validateFormField(name, value));
     }
   };
 
