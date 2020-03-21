@@ -6,8 +6,8 @@
   "scripts": {
     "start": "node dist/index.js",
     "eslint": "eslint --ext js,ts,tsx src",
-    "build": "tsc && npm run eslint",
-    "dev": "concurrently -k -p \"[{name}]\" -n \"TSC,Node\" -c \"yellow.bold,green.bold\" \"tsc -w\" \"nodemon dist/index.js\""
+    "build": "tsc && yarn run eslint",
+    "dev": "concurrently -k -p \"[{name}]\" -n \"TSC,Node\" -c \"yellow.bold,green.bold\" \"tsc -w\" \"yarn start\""
   },
   "dependencies": {
     "compression": "^1.7.4",
@@ -23,6 +23,8 @@
     "@types/helmet": "^0.0.45",
     "@types/mongoose": "^5.7.10",
     "@types/node": "^13.11.1",
+    "@typescript-eslint/eslint-plugin": "^2.27.0",
+    "@typescript-eslint/parser": "^2.27.0",
     "concurrently": "^5.1.0",
     "eslint": "^6.8.0",
     "eslint-config-prettier": "^6.10.1",

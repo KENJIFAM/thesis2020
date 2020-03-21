@@ -1,6 +1,4 @@
 {
-  "extends": ["prettier"],
-  "rules": {
-    "no-console": "warn"
-  }
+  "parser": "@typescript-eslint/parser",
+  "extends": ["plugin:@typescript-eslint/recommended", "prettier"]
 }
