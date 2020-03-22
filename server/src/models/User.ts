@@ -37,6 +37,19 @@ const userSchema = new mongoose.Schema<UserModel>(
   },
 );
 
+userSchema.pre<UserModel>('save', async function (next) {
+  try {
+    if (!this.isModified('password')) {
+      return next();
+    }
+    const hashedPassword = await bcrypt.hash(this.password, 10);
+    this.password = hashedPassword;
+    return next();
+  } catch (err) {
+    return next(err);
+  }
+});
+
 const User = mongoose.model<UserModel>('User', userSchema);
 
 export default User;
