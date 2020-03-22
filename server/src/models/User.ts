@@ -50,7 +50,7 @@ userSchema.pre<UserModel>('save', async function (next) {
   }
 });
 
-userSchema.methods.validatePassword = async function (inputPassword, next) {
+userSchema.methods.validatePassword = async function (inputPassword, next): Promise<boolean> {
   try {
     const isMatch = await bcrypt.compare(inputPassword, this.password);
     return isMatch;
@@ -59,7 +59,7 @@ userSchema.methods.validatePassword = async function (inputPassword, next) {
   }
 };
 
-userSchema.methods.generateJwt = async function (next) {
+userSchema.methods.generateJwt = async function (next): Promise<string> {
   try {
     const expiry = new Date();
     expiry.setDate(expiry.getDate() + 7);

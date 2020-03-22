@@ -1,4 +1,5 @@
 import mongoose, { ConnectionOptions } from 'mongoose';
+import User from './User';
 
 const { MONGO_USERNAME, MONGO_PASSWORD, MONGO_HOST, MONGO_DATABASE, MONGO_PORT } = process.env as {
   [key: string]: string;
@@ -21,3 +22,7 @@ mongoose
   .connect(url, options)
   .then(() => console.log('MongoDB is connected'))
   .catch((err) => console.log('MongoDB connection error. ' + err));
+
+export default {
+  User,
+};
