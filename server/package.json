@@ -7,7 +7,7 @@
     "start": "node dist/index.js",
     "eslint": "eslint --ext js,ts,tsx src",
     "build": "tsc && yarn run eslint",
-    "dev": "concurrently -k -p \"[{name}]\" -n \"TSC,Node\" -c \"yellow.bold,green.bold\" \"tsc -w\" \"yarn start\""
+    "dev": "concurrently -k -p \"[{name}]\" -n \"TSC,Node\" -c \"yellow.bold,green.bold\" \"tsc -w\" \"nodemon dist/index.js\""
   },
   "dependencies": {
     "compression": "^1.7.4",
