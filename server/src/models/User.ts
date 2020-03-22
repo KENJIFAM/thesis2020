@@ -59,6 +59,24 @@ userSchema.methods.validatePassword = async function (inputPassword, next) {
   }
 };
 
+userSchema.methods.generateJwt = async function (next) {
+  try {
+    const expiry = new Date();
+    expiry.setDate(expiry.getDate() + 7);
+
+    return jwt.sign(
+      {
+        id: this.id,
+        email: this.email,
+        exp: expiry.getTime(),
+      },
+      process.env.SECRET_KEY as string,
+    );
+  } catch (err) {
+    return next(err);
+  }
+};
+
 const User = mongoose.model<UserModel>('User', userSchema);
 
 export default User;

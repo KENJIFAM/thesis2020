@@ -26,6 +26,7 @@ services:
       - MONGO_HOST=mongo
       - MONGO_DATABASE=mongo
       - MONGO_PORT=27017
+      - SECRET_KEY=jwt_secret
   client:
     restart: always
     tty: true
