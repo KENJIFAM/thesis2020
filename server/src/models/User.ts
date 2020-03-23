@@ -12,6 +12,11 @@ export interface UserModel extends Document {
   generateJwt: (next: HookNextFunction) => Promise<string>;
 }
 
+export interface JwtPayload {
+  id: string;
+  email: string;
+}
+
 const userSchema = new mongoose.Schema<UserModel>(
   {
     email: {
@@ -61,17 +66,8 @@ userSchema.methods.validatePassword = async function (inputPassword, next): Prom
 
 userSchema.methods.generateJwt = async function (next): Promise<string> {
   try {
-    const expiry = new Date();
-    expiry.setDate(expiry.getDate() + 7);
-
-    return jwt.sign(
-      {
-        id: this.id,
-        email: this.email,
-        exp: expiry.getTime(),
-      },
-      process.env.SECRET_KEY as string,
-    );
+    const { id, email }: JwtPayload = this;
+    return jwt.sign({ id, email }, process.env.SECRET_KEY as string, { expiresIn: '1h' });
   } catch (err) {
     return next(err);
   }
