@@ -3,6 +3,7 @@ import cors from 'cors';
 import compression from 'compression';
 import helmet from 'helmet';
 import authController from './controllers/authController';
+import errorHandler from './middleware/error';
 
 const app = express();
 
@@ -17,6 +18,8 @@ app.use('/auth', authController);
 app.get('/*', (req, res) => {
   res.send('Welcome to Food Help APIs!');
 });
+
+app.use(errorHandler);
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
