@@ -11,8 +11,6 @@ mongoose.Promise = Promise;
 const url = `mongodb://${MONGO_USERNAME}:${MONGO_PASSWORD}@${MONGO_HOST}:${MONGO_DATABASE}/${MONGO_PORT}?authMechanism=SCRAM-SHA-1&authSource=admin`;
 const options: ConnectionOptions = {
   useNewUrlParser: true,
-  reconnectTries: 60,
-  reconnectInterval: 1000,
   useCreateIndex: true,
   useFindAndModify: false,
   useUnifiedTopology: true,
