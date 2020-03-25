@@ -1,6 +1,8 @@
 import mongoose, { ConnectionOptions } from 'mongoose';
 import User from './User';
 
+export * from './User';
+
 const { MONGO_USERNAME, MONGO_PASSWORD, MONGO_HOST, MONGO_DATABASE, MONGO_PORT } = process.env as {
   [key: string]: string;
 };

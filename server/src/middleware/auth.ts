@@ -19,7 +19,7 @@ export const checkCorrectUser = (req: Request, res: Response, next: NextFunction
   try {
     const token = req.headers.authorization?.split(' ')[1] || '';
     jwt.verify(token, process.env.SECRET_KEY as string, (err, decoded) =>
-      (decoded as JwtPayload)?.id === req.params.id
+      (decoded as JwtPayload)?.id === req.body.id
         ? next()
         : next({ status: 401, message: 'Unauthorized!' }),
     );

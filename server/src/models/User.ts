@@ -66,8 +66,8 @@ userSchema.methods.validatePassword = async function (inputPassword, next): Prom
 
 userSchema.methods.generateJwt = async function (next): Promise<string> {
   try {
-    const { id, email }: JwtPayload = this;
-    return jwt.sign({ id, email }, process.env.SECRET_KEY as string, { expiresIn: '1h' });
+    const { id }: JwtPayload = this;
+    return jwt.sign({ id }, process.env.SECRET_KEY as string, { expiresIn: '1h' });
   } catch (err) {
     return next(err);
   }
