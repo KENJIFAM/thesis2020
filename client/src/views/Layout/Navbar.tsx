@@ -97,7 +97,12 @@ const Navbar = () => {
           </Drawer>
         </Hidden>
       </AppBar>
-      <AuthDialog open={authOpen} isSignUp={isSignUp} onClose={() => setAuthOpen(false)} />
+      <AuthDialog
+        open={authOpen}
+        isSignUp={isSignUp}
+        setIsSignUp={setIsSignUp}
+        onClose={() => setAuthOpen(false)}
+      />
     </Box>
   );
 };

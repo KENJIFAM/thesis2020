@@ -12,6 +12,7 @@ import {
   useMediaQuery,
   Box,
   MenuItem,
+  DialogActions,
 } from '@material-ui/core';
 import useFormField, { FormFieldProps } from '../hooks/useFormField';
 import { isValidEmail } from '../services/utils';
@@ -24,6 +25,7 @@ interface Props {
   open: boolean;
   onClose: () => void;
   isSignUp: boolean;
+  setIsSignUp: (isSignUp: boolean) => void;
 }
 
 const orgTypes = [
@@ -60,7 +62,7 @@ const validateForm = (form: AuthForm) =>
     })
     .reduce((res, field) => res && field, true);
 
-const AuthDialog = ({ open, onClose, isSignUp }: Props) => {
+const AuthDialog = ({ open, onClose, isSignUp, setIsSignUp }: Props) => {
   const email = useFormField<string>('');
   const password = useFormField<string>('');
   const orgType = useFormField<string>('');
@@ -182,12 +184,12 @@ const AuthDialog = ({ open, onClose, isSignUp }: Props) => {
                 />
               </>
             )}
-            <Box className={classes.dialogAction}>
+            <Box className={classes.controlButtons}>
               <Button
                 onClick={onSubmit}
                 variant="contained"
                 color="primary"
-                className={classes.actionBtn}
+                className={classes.button}
               >
                 {isSignUp ? 'Sign up' : 'Log in'}
               </Button>
@@ -195,7 +197,7 @@ const AuthDialog = ({ open, onClose, isSignUp }: Props) => {
                 onClick={onClose}
                 variant="contained"
                 color="default"
-                className={classes.actionBtn}
+                className={classes.button}
               >
                 Cancel
               </Button>
@@ -203,6 +205,14 @@ const AuthDialog = ({ open, onClose, isSignUp }: Props) => {
           </form>
         </Box>
       </DialogContent>
+      <DialogActions className={classes.dialogAction}>
+        <Typography>
+          {isSignUp ? 'Already have an account? ' : 'Not have an account yet? '}
+          <span className={classes.textAction} onClick={() => setIsSignUp(!isSignUp)}>
+            {isSignUp ? 'Log in!' : 'Sign up!'}
+          </span>
+        </Typography>
+      </DialogActions>
     </Dialog>
   );
 };
@@ -225,13 +235,21 @@ const useStyles = makeStyles((theme: Theme) =>
         margin: theme.spacing(1),
       },
     },
-    dialogAction: {
+    controlButtons: {
       display: 'flex',
       justifyContent: 'center',
-      margin: theme.spacing(1, 0, 5),
+      margin: theme.spacing(2, 0, 5),
     },
-    actionBtn: {
+    button: {
       margin: theme.spacing(0, 2),
+    },
+    dialogAction: {
+      justifyContent: 'center',
+    },
+    textAction: {
+      color: theme.palette.primary.main,
+      cursor: 'pointer',
+      textDecoration: 'underline',
     },
   }),
 );
