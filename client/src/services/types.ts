@@ -1,19 +1,25 @@
-/**
- * ACTIONS
- */
-
-export enum ActionTypes {
-  SIGN_IN = 'SIGN_IN',
-  SIGN_OUT = 'SIGN_OUT',
+export interface User {
+  id: string;
+  email: string;
+  orgType: 'SUPERMARKET' | 'NON-PROFIT' | 'BUSINESS';
+  orgName: string;
 }
 
-export interface SignInAction {
-  type: ActionTypes.SIGN_IN;
-  user: string;
+export interface ErrorResponse {
+  error: string;
 }
 
-export interface SignOutAction {
-  type: ActionTypes.SIGN_OUT;
+export interface LogInFormData {
+  email: string;
+  password: string;
 }
 
-export type AuthAction = SignInAction | SignOutAction;
+export interface SignUpFormData extends LogInFormData {
+  orgType: 'SUPERMARKET' | 'NON-PROFIT' | 'BUSINESS';
+  orgName: string;
+}
+
+export interface AuthResponse {
+  id: string;
+  token: string;
+}

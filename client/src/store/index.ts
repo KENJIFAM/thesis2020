@@ -1,12 +1,12 @@
 import { configureStore, ThunkAction, Action } from '@reduxjs/toolkit';
-import rootReducer, { RootState } from './reducers';
+import reducer, { RootState } from './authSlice';
 
 const store = configureStore({
-  reducer: rootReducer,
+  reducer: reducer,
 });
 
 if (process.env.NODE_ENV === 'development' && module.hot) {
-  module.hot.accept('./reducers', () => store.replaceReducer(rootReducer));
+  module.hot.accept('./authSlice', () => store.replaceReducer(reducer));
 }
 
 export type AppDispatch = typeof store.dispatch;
