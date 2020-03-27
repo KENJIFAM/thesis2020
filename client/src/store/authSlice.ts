@@ -2,7 +2,7 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { AxiosResponse } from 'axios';
 import { User, LogInFormData, AuthResponse } from '../services/types';
 import { AppThunk } from '.';
-import apis from '../apis';
+import axios, { setTokenHeader } from '../apis';
 
 export interface RootState {
   auth: AuthState;
@@ -34,6 +34,7 @@ const auth = createSlice({
       ...state,
       isLoading: false,
       isLoggedIn: true,
+      error: null,
       user: action.payload,
     }),
     logInFail: (state, action: PayloadAction<string>): AuthState => ({
@@ -54,9 +55,13 @@ export const { logInStart, logInSuccess, logInFail, logOut } = auth.actions;
 export const logIn = ({ email, password }: LogInFormData): AppThunk => async (dispatch) => {
   try {
     dispatch(logInStart());
-    const auth: AxiosResponse<AuthResponse> = await apis.post('/auth/login', { email, password });
-    const { id, token } = auth.data;
-    const user: AxiosResponse<User> = await apis.post('/profile', { id });
+    const auth: AxiosResponse<AuthResponse> = await axios.post('/auth/login', {
+      email,
+      password,
+    });
+    const { token } = auth.data;
+    setTokenHeader(token);
+    const user: AxiosResponse<User> = await axios.get('/profile');
     localStorage.setItem('token', token);
     dispatch(logInSuccess(user.data));
   } catch (err) {
