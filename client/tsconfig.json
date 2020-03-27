@@ -13,7 +13,8 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
-    "jsx": "react"
+    "jsx": "react",
+    "assumeChangesOnlyAffectDirectDependencies": true
   },
   "include": ["src"],
   "exclude": ["node_modules", "**/node_modules/*", "config-overrides.js"]

@@ -20,7 +20,8 @@
     "checkJs": true,
     "esModuleInterop": true,
     "noFallthroughCasesInSwitch": true,
-    "noUnusedLocals": true
+    "noUnusedLocals": true,
+    "assumeChangesOnlyAffectDirectDependencies": true
   },
   "exclude": ["node_modules/**/*", "dist/**/*"],
   "include": ["src/**/*"]
