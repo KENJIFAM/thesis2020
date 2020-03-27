@@ -23,3 +23,9 @@ export interface AuthResponse {
   id: string;
   token: string;
 }
+
+export interface TokenPayload {
+  id: string;
+  iat: string;
+  exp: string;
+}

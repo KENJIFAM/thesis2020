@@ -1,8 +1,9 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { AxiosResponse } from 'axios';
-import { User, LogInFormData, AuthResponse } from '../services/types';
-import { AppThunk } from '.';
+import atob from 'atob';
 import axios, { setTokenHeader } from '../apis';
+import type { AxiosResponse } from 'axios';
+import type { User, LogInFormData, AuthResponse, TokenPayload } from '../services/types';
+import type { AppThunk } from '.';
 
 export interface RootState {
   auth: AuthState;
@@ -10,14 +11,12 @@ export interface RootState {
 
 interface AuthState {
   user: User | null;
-  isLoggedIn: boolean;
   isLoading: boolean;
   error: string | null;
 }
 
 const initialState: AuthState = {
   user: null,
-  isLoggedIn: false,
   isLoading: false,
   error: null,
 };
@@ -33,7 +32,6 @@ const auth = createSlice({
     logInSuccess: (state, action: PayloadAction<User>): AuthState => ({
       ...state,
       isLoading: false,
-      isLoggedIn: true,
       error: null,
       user: action.payload,
     }),
@@ -44,13 +42,32 @@ const auth = createSlice({
     }),
     logOut: (state): AuthState => ({
       ...state,
-      isLoggedIn: false,
       user: null,
     }),
   },
 });
 
-export const { logInStart, logInSuccess, logInFail, logOut } = auth.actions;
+export const { logInStart, logInSuccess, logInFail, logOut: logOutAction } = auth.actions;
+
+export const saveToken = (token: string): void => localStorage.setItem('token', token);
+
+export const getToken = (): string | null => localStorage.getItem('token');
+
+export const isLoggedIn = (): boolean => {
+  const payload = getToken()?.split('.')[1];
+  if (!payload) {
+    return false;
+  }
+  const decode: TokenPayload = JSON.parse(atob(payload));
+  const now = Date.now() / 1000;
+  return parseInt(decode.iat) < now && parseInt(decode.exp) > now;
+};
+
+export const logOut = (): AppThunk => async (dispatch) => {
+  localStorage.removeItem('token');
+  setTokenHeader();
+  dispatch(logOutAction());
+};
 
 export const logIn = ({ email, password }: LogInFormData): AppThunk => async (dispatch) => {
   try {
@@ -62,10 +79,10 @@ export const logIn = ({ email, password }: LogInFormData): AppThunk => async (di
     const { token } = auth.data;
     setTokenHeader(token);
     const user: AxiosResponse<User> = await axios.get('/profile');
-    localStorage.setItem('token', token);
+    saveToken(token);
     dispatch(logInSuccess(user.data));
-  } catch (err) {
-    dispatch(logInFail(err.response.data.error));
+  } catch (e) {
+    dispatch(logInFail(e.response.data.error));
   }
 };
 
