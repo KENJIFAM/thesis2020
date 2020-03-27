@@ -3,6 +3,8 @@ services:
   mongo:
     image: mongo
     restart: always
+    volumes:
+      - mongodbdata:/data/db
     environment:
       - MONGO_INITDB_ROOT_USERNAME=mongo
       - MONGO_INITDB_ROOT_PASSWORD=mongo_password
@@ -36,3 +38,6 @@ services:
     volumes:
       - /app/node_modules
       - ./client:/app
+volumes:
+  mongodbdata:
+    external: true
