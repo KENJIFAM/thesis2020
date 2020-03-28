@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import { createStyles, makeStyles } from '@material-ui/core/styles';
 import {
   Box,
@@ -16,18 +17,26 @@ import {
 } from '@material-ui/core';
 import Menu from '@material-ui/icons/Menu';
 import AuthDialog from '../../components/AuthDialog';
+import { RootState } from '../../store/rootReducer';
+import { logOut } from '../../store/authSlice';
 
 const Navbar = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [authOpen, setAuthOpen] = useState(false);
   const [isSignUp, setIsSignUp] = useState(false);
   const classes = useStyles();
+  const dispatch = useDispatch();
+  const isLoggedIn = useSelector((state: RootState) => state.auth.isLoggedIn);
 
   const handleDrawerToggle = () => setMobileOpen(!mobileOpen);
 
   const openAuthDialog = (isSignUp: boolean = false) => {
     setIsSignUp(isSignUp);
     setAuthOpen(true);
+  };
+
+  const handleLogOut = () => {
+    dispatch(logOut());
   };
 
   const renderLinks = () => (
@@ -37,31 +46,45 @@ const Navbar = () => {
           Home
         </Link>
       </ListItem>
-      <ListItem className={classes.listItem}>
-        <Link className={classes.link} href="/partners">
-          Partners
-        </Link>
-      </ListItem>
-      <ListItem className={classes.listItem}>
-        <Link className={classes.link} href="/requests">
-          Requests
-        </Link>
-      </ListItem>
+      {isLoggedIn && (
+        <>
+          <ListItem className={classes.listItem}>
+            <Link className={classes.link} href="/partners">
+              Partners
+            </Link>
+          </ListItem>
+          <ListItem className={classes.listItem}>
+            <Link className={classes.link} href="/requests">
+              Requests
+            </Link>
+          </ListItem>
+        </>
+      )}
       <ListItem className={classes.listItem}>
         <Link className={classes.link} href="/about">
           About us
         </Link>
       </ListItem>
-      <ListItem className={classes.listItem}>
-        <Button variant="outlined" color="primary" onClick={() => openAuthDialog()}>
-          Log in
-        </Button>
-      </ListItem>
-      <ListItem className={classes.listItem}>
-        <Button variant="contained" color="primary" onClick={() => openAuthDialog(true)}>
-          Sign up
-        </Button>
-      </ListItem>
+      {isLoggedIn ? (
+        <ListItem className={classes.listItem}>
+          <Button variant="outlined" color="primary" onClick={handleLogOut}>
+            Log out
+          </Button>
+        </ListItem>
+      ) : (
+        <>
+          <ListItem className={classes.listItem}>
+            <Button variant="outlined" color="primary" onClick={() => openAuthDialog()}>
+              Log in
+            </Button>
+          </ListItem>
+          <ListItem className={classes.listItem}>
+            <Button variant="contained" color="primary" onClick={() => openAuthDialog(true)}>
+              Sign up
+            </Button>
+          </ListItem>
+        </>
+      )}
     </List>
   );
 

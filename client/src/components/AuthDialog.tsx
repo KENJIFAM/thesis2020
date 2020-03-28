@@ -1,5 +1,5 @@
-import React from 'react';
-import { useDispatch } from 'react-redux';
+import React, { useEffect } from 'react';
+import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import { createStyles, makeStyles, useTheme, Theme } from '@material-ui/core/styles';
 import { Close as CloseIcon } from '@material-ui/icons';
 import {
@@ -14,11 +14,14 @@ import {
   Box,
   MenuItem,
   DialogActions,
+  CircularProgress,
+  FormHelperText,
 } from '@material-ui/core';
 import useFormField, { FormFieldProps } from '../hooks/useFormField';
 import { isValidEmail } from '../services/utils';
-import { auth } from '../store/authSlice';
+import { auth, authReset } from '../store/authSlice';
 import { LogInFormData, SignUpFormData } from '../services/types';
+import { RootState } from '../store/rootReducer';
 
 type LogInField = 'email' | 'password';
 type SignUpField = LogInField | 'orgType' | 'orgName';
@@ -82,6 +85,16 @@ const AuthDialog = ({ open, onClose, isSignUp, setIsSignUp }: Props) => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const dispatch = useDispatch();
+  const { error, isLoading, isLoggedIn } = useSelector(
+    (state: RootState) => state.auth,
+    shallowEqual,
+  );
+
+  useEffect(() => {
+    if (isLoggedIn) {
+      onClose();
+    }
+  }, [isLoggedIn]);
 
   const handleChange = (
     formField: FormFieldProps<string>,
@@ -94,6 +107,11 @@ const AuthDialog = ({ open, onClose, isSignUp, setIsSignUp }: Props) => {
     }
   };
 
+  const handleCancel = () => {
+    onClose();
+    dispatch(authReset());
+  };
+
   const getForm = (): AuthForm =>
     isSignUp ? { email, password, orgType, orgName } : { email, password };
 
@@ -104,7 +122,6 @@ const AuthDialog = ({ open, onClose, isSignUp, setIsSignUp }: Props) => {
     }
     const formData = createAuthFormData(form);
     dispatch(auth(isSignUp ? 'signup' : 'login', formData));
-    onClose();
   };
 
   const renderDialogTitle = () => (
@@ -117,7 +134,14 @@ const AuthDialog = ({ open, onClose, isSignUp, setIsSignUp }: Props) => {
   );
 
   return (
-    <Dialog open={open} onClose={onClose} fullWidth fullScreen={isMobile} maxWidth="sm">
+    <Dialog
+      open={open}
+      onClose={handleCancel}
+      fullWidth
+      fullScreen={isMobile}
+      maxWidth="sm"
+      disableScrollLock
+    >
       {renderDialogTitle()}
       <DialogContent dividers>
         <Box className={classes.dialogContent}>
@@ -198,17 +222,21 @@ const AuthDialog = ({ open, onClose, isSignUp, setIsSignUp }: Props) => {
                 />
               </>
             )}
+            <FormHelperText error variant="outlined">
+              {error}
+            </FormHelperText>
             <Box className={classes.controlButtons}>
               <Button
                 onClick={onSubmit}
                 variant="contained"
                 color="primary"
                 className={classes.button}
+                disabled={isLoading}
               >
-                {isSignUp ? 'Sign up' : 'Log in'}
+                {isLoading ? <CircularProgress size={20} /> : isSignUp ? 'Sign up' : 'Log in'}
               </Button>
               <Button
-                onClick={onClose}
+                onClick={handleCancel}
                 variant="contained"
                 color="default"
                 className={classes.button}
@@ -256,6 +284,7 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     button: {
       margin: theme.spacing(0, 2),
+      minWidth: 82,
     },
     dialogAction: {
       justifyContent: 'center',

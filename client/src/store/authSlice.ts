@@ -13,12 +13,14 @@ import type { AppThunk } from '.';
 
 export interface AuthState {
   user: User | null;
+  isLoggedIn: boolean;
   isLoading: boolean;
   error: string | null;
 }
 
 const initialState: AuthState = {
   user: null,
+  isLoggedIn: false,
   isLoading: false,
   error: null,
 };
@@ -34,6 +36,7 @@ const authSlice = createSlice({
     authSuccess: (state, action: PayloadAction<User>): AuthState => ({
       ...state,
       isLoading: false,
+      isLoggedIn: true,
       error: null,
       user: action.payload,
     }),
@@ -42,14 +45,11 @@ const authSlice = createSlice({
       isLoading: false,
       error: action.payload,
     }),
-    logOut: (state): AuthState => ({
-      ...state,
-      user: null,
-    }),
+    authReset: (state): AuthState => initialState,
   },
 });
 
-export const { authStart, authSuccess, authFail, logOut: logOutAction } = authSlice.actions;
+export const { authStart, authSuccess, authFail, authReset } = authSlice.actions;
 
 export const saveToken = (token: string): void => localStorage.setItem('token', token);
 
@@ -60,7 +60,7 @@ export const getTokenPayload = (): TokenPayload | null => {
   return payload ? JSON.parse(atob(payload)) : null;
 };
 
-export const isLoggedIn = (): boolean => {
+export const validToken = (): boolean => {
   const payload = getTokenPayload();
   const now = Date.now() / 1000;
   return !!payload?.id && parseInt(payload.iat) < now && parseInt(payload.exp) > now;
@@ -69,7 +69,7 @@ export const isLoggedIn = (): boolean => {
 export const logOut = (): AppThunk => async (dispatch) => {
   localStorage.removeItem('token');
   setTokenHeader();
-  dispatch(logOutAction());
+  dispatch(authReset());
 };
 
 export const auth = (
