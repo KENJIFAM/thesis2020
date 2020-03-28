@@ -1,4 +1,5 @@
 import React from 'react';
+import { useDispatch } from 'react-redux';
 import { createStyles, makeStyles, useTheme, Theme } from '@material-ui/core/styles';
 import { Close as CloseIcon } from '@material-ui/icons';
 import {
@@ -16,10 +17,15 @@ import {
 } from '@material-ui/core';
 import useFormField, { FormFieldProps } from '../hooks/useFormField';
 import { isValidEmail } from '../services/utils';
+import { auth } from '../store/authSlice';
+import { LogInFormData, SignUpFormData } from '../services/types';
 
-export interface AuthForm {
-  [field: string]: FormFieldProps<string>;
-}
+type LogInField = 'email' | 'password';
+type SignUpField = LogInField | 'orgType' | 'orgName';
+
+type AuthForm =
+  | { [key in LogInField]: FormFieldProps<string> }
+  | { [key in SignUpField]: FormFieldProps<string> };
 
 interface Props {
   open: boolean;
@@ -53,7 +59,7 @@ const validateFormField = (name: string, value: string): string => {
   }
 };
 
-const validateForm = (form: AuthForm) =>
+const validateForm = (form: AuthForm): boolean =>
   Object.entries(form)
     .map(([name, field]) => {
       const error = validateFormField(name, field.value);
@@ -61,6 +67,11 @@ const validateForm = (form: AuthForm) =>
       return !error;
     })
     .reduce((res, field) => res && field, true);
+
+const createAuthFormData = (form: AuthForm): LogInFormData | SignUpFormData =>
+  Object.fromEntries(Object.entries(form).map(([name, field]) => [name, field.value])) as {
+    [K in keyof AuthForm]: string;
+  };
 
 const AuthDialog = ({ open, onClose, isSignUp, setIsSignUp }: Props) => {
   const email = useFormField<string>('');
@@ -70,6 +81,7 @@ const AuthDialog = ({ open, onClose, isSignUp, setIsSignUp }: Props) => {
   const classes = useStyles();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  const dispatch = useDispatch();
 
   const handleChange = (
     formField: FormFieldProps<string>,
@@ -90,7 +102,8 @@ const AuthDialog = ({ open, onClose, isSignUp, setIsSignUp }: Props) => {
     if (!validateForm(form)) {
       return;
     }
-    console.log(form);
+    const formData = createAuthFormData(form);
+    dispatch(auth(isSignUp ? 'signup' : 'login', formData));
   };
 
   const renderDialogTitle = () => (

@@ -2,7 +2,13 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import atob from 'atob';
 import axios, { setTokenHeader } from '../apis';
 import type { AxiosResponse } from 'axios';
-import type { User, LogInFormData, AuthResponse, TokenPayload } from '../services/types';
+import type {
+  User,
+  LogInFormData,
+  AuthResponse,
+  TokenPayload,
+  SignUpFormData,
+} from '../services/types';
 import type { AppThunk } from '.';
 
 export interface RootState {
@@ -21,21 +27,21 @@ const initialState: AuthState = {
   error: null,
 };
 
-const auth = createSlice({
+const authSlice = createSlice({
   name: 'auth',
   initialState,
   reducers: {
-    logInStart: (state): AuthState => ({
+    authStart: (state): AuthState => ({
       ...state,
       isLoading: true,
     }),
-    logInSuccess: (state, action: PayloadAction<User>): AuthState => ({
+    authSuccess: (state, action: PayloadAction<User>): AuthState => ({
       ...state,
       isLoading: false,
       error: null,
       user: action.payload,
     }),
-    logInFail: (state, action: PayloadAction<string>): AuthState => ({
+    authFail: (state, action: PayloadAction<string>): AuthState => ({
       ...state,
       isLoading: false,
       error: action.payload,
@@ -47,7 +53,7 @@ const auth = createSlice({
   },
 });
 
-export const { logInStart, logInSuccess, logInFail, logOut: logOutAction } = auth.actions;
+export const { authStart, authSuccess, authFail, logOut: logOutAction } = authSlice.actions;
 
 export const saveToken = (token: string): void => localStorage.setItem('token', token);
 
@@ -60,7 +66,7 @@ export const isLoggedIn = (): boolean => {
   }
   const decode: TokenPayload = JSON.parse(atob(payload));
   const now = Date.now() / 1000;
-  return parseInt(decode.iat) < now && parseInt(decode.exp) > now;
+  return !!decode.id && parseInt(decode.iat) < now && parseInt(decode.exp) > now;
 };
 
 export const logOut = (): AppThunk => async (dispatch) => {
@@ -69,21 +75,21 @@ export const logOut = (): AppThunk => async (dispatch) => {
   dispatch(logOutAction());
 };
 
-export const logIn = ({ email, password }: LogInFormData): AppThunk => async (dispatch) => {
+export const auth = (
+  type: 'login' | 'signup',
+  authFormData: LogInFormData | SignUpFormData,
+): AppThunk => async (dispatch) => {
   try {
-    dispatch(logInStart());
-    const auth: AxiosResponse<AuthResponse> = await axios.post('/auth/login', {
-      email,
-      password,
-    });
+    dispatch(authStart());
+    const auth: AxiosResponse<AuthResponse> = await axios.post(`/auth/${type}`, authFormData);
     const { token } = auth.data;
     setTokenHeader(token);
     const user: AxiosResponse<User> = await axios.get('/profile');
     saveToken(token);
-    dispatch(logInSuccess(user.data));
+    dispatch(authSuccess(user.data));
   } catch (e) {
-    dispatch(logInFail(e.response.data.error));
+    dispatch(authFail(e.response.data.error));
   }
 };
 
-export default auth.reducer;
+export default authSlice.reducer;
