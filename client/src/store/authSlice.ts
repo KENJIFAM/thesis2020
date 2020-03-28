@@ -55,14 +55,15 @@ export const saveToken = (token: string): void => localStorage.setItem('token', 
 
 export const getToken = (): string | null => localStorage.getItem('token');
 
-export const isLoggedIn = (): boolean => {
+export const getTokenPayload = (): TokenPayload | null => {
   const payload = getToken()?.split('.')[1];
-  if (!payload) {
-    return false;
-  }
-  const decode: TokenPayload = JSON.parse(atob(payload));
+  return payload ? JSON.parse(atob(payload)) : null;
+};
+
+export const isLoggedIn = (): boolean => {
+  const payload = getTokenPayload();
   const now = Date.now() / 1000;
-  return !!decode.id && parseInt(decode.iat) < now && parseInt(decode.exp) > now;
+  return !!payload?.id && parseInt(payload.iat) < now && parseInt(payload.exp) > now;
 };
 
 export const logOut = (): AppThunk => async (dispatch) => {
@@ -86,6 +87,19 @@ export const auth = (
   } catch (e) {
     dispatch(authFail(e.response.data.error));
   }
+};
+
+export const initialAuth = (): AppThunk => async (dispatch) => {
+  try {
+    const token = getToken();
+    const payload = getTokenPayload();
+    if (!token || !payload) {
+      return;
+    }
+    setTokenHeader(token);
+    const user: AxiosResponse<User> = await axios.get('/profile');
+    dispatch(authSuccess(user.data));
+  } catch (e) {}
 };
 
 export default authSlice.reducer;

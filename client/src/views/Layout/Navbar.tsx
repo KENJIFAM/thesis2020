@@ -19,7 +19,7 @@ import AuthDialog from '../../components/AuthDialog';
 
 const Navbar = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [authOpen, setAuthOpen] = useState(true);
+  const [authOpen, setAuthOpen] = useState(false);
   const [isSignUp, setIsSignUp] = useState(false);
   const classes = useStyles();
 

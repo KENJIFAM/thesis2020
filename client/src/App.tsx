@@ -1,9 +1,19 @@
-import React from 'react';
+import React, { useEffect } from 'react';
+import { useDispatch } from 'react-redux';
 import { BrowserRouter as Router, Route, Switch, Redirect } from 'react-router-dom';
 import Layout from './views/Layout';
 import Home from './views/Home';
+import { isLoggedIn, initialAuth } from './store/authSlice';
 
 const App = () => {
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    if (isLoggedIn()) {
+      dispatch(initialAuth());
+    }
+  }, [dispatch]);
+
   return (
     <Router>
       <Layout>

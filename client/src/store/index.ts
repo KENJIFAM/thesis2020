@@ -1,12 +1,12 @@
 import { configureStore, ThunkAction, Action } from '@reduxjs/toolkit';
-import reducerRoot, { RootState } from './reducers';
+import rootReducer, { RootState } from './rootReducer';
 
 const store = configureStore({
-  reducer: reducerRoot,
+  reducer: rootReducer,
 });
 
 if (process.env.NODE_ENV === 'development' && module.hot) {
-  module.hot.accept('./reducers', () => store.replaceReducer(reducerRoot));
+  module.hot.accept('./rootReducer', () => store.replaceReducer(rootReducer));
 }
 
 export type AppDispatch = typeof store.dispatch;
