@@ -104,6 +104,7 @@ const AuthDialog = ({ open, onClose, isSignUp, setIsSignUp }: Props) => {
     }
     const formData = createAuthFormData(form);
     dispatch(auth(isSignUp ? 'signup' : 'login', formData));
+    onClose();
   };
 
   const renderDialogTitle = () => (
