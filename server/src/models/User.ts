@@ -1,6 +1,7 @@
 import mongoose, { Document, HookNextFunction } from 'mongoose';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
+import { RequestModel } from './Request';
 
 export interface UserModel extends Document {
   id: string;
@@ -8,6 +9,7 @@ export interface UserModel extends Document {
   password: string;
   orgType: 'SUPERMARKET' | 'NON-PROFIT' | 'BUSINESS';
   orgName: string;
+  requests: mongoose.Types.Array<RequestModel>;
   validatePassword: (password: string, next: HookNextFunction) => Promise<boolean>;
   generateJwt: (next: HookNextFunction) => Promise<string>;
 }
@@ -19,23 +21,11 @@ export interface JwtPayload {
 
 const userSchema = new mongoose.Schema<UserModel>(
   {
-    email: {
-      type: String,
-      required: true,
-      unique: true,
-    },
-    password: {
-      type: String,
-      required: true,
-    },
-    orgType: {
-      type: String,
-      required: true,
-    },
-    orgName: {
-      type: String,
-      required: true,
-    },
+    email: { type: String, required: true, unique: true },
+    password: { type: String, required: true },
+    orgType: { type: String, required: true },
+    orgName: { type: String, required: true },
+    requests: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Request' }],
   },
   {
     timestamps: true,
