@@ -1,12 +1,11 @@
 import React, { useState } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useHistory } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { createStyles, makeStyles } from '@material-ui/core/styles';
 import {
   Box,
   AppBar,
   Toolbar,
-  Link,
   List,
   ListItem,
   Hidden,
@@ -28,6 +27,7 @@ const Navbar = () => {
   const [isSignUp, setIsSignUp] = useState(false);
   const classes = useStyles();
   const { pathname } = useLocation();
+  const history = useHistory();
   const dispatch = useDispatch();
   const isLoggedIn = useSelector((state: RootState) => state.auth.isLoggedIn);
 
@@ -44,38 +44,39 @@ const Navbar = () => {
 
   const renderLinks = () => (
     <List className={classes.list}>
-      <ListItem className={classes.listItem}>
-        <Link className={classNames(classes.link, pathname === '/' && classes.linkActive)} href="/">
-          Home
-        </Link>
+      <ListItem
+        className={classNames(classes.listItem, pathname === '/' && classes.listItemActive)}
+        onClick={() => history.push('/')}
+      >
+        Home
       </ListItem>
       {isLoggedIn && (
         <>
-          <ListItem className={classes.listItem}>
-            <Link
-              className={classNames(classes.link, pathname === '/requests' && classes.linkActive)}
-              href="/requests"
-            >
-              Requests
-            </Link>
+          <ListItem
+            className={classNames(
+              classes.listItem,
+              pathname === '/requests' && classes.listItemActive,
+            )}
+            onClick={() => history.push('/requests')}
+          >
+            Requests
           </ListItem>
-          <ListItem className={classes.listItem}>
-            <Link
-              className={classNames(classes.link, pathname === '/messages' && classes.linkActive)}
-              href="/messages"
-            >
-              Messages
-            </Link>
+          <ListItem
+            className={classNames(
+              classes.listItem,
+              pathname === '/messages' && classes.listItemActive,
+            )}
+            onClick={() => history.push('/messages')}
+          >
+            Messages
           </ListItem>
         </>
       )}
-      <ListItem className={classes.listItem}>
-        <Link
-          className={classNames(classes.link, pathname === '/about' && classes.linkActive)}
-          href="/about"
-        >
-          About us
-        </Link>
+      <ListItem
+        className={classNames(classes.listItem, pathname === '/about' && classes.listItemActive)}
+        onClick={() => history.push('/about')}
+      >
+        About us
       </ListItem>
       {isLoggedIn ? (
         <ListItem className={classes.listItem}>
@@ -104,11 +105,14 @@ const Navbar = () => {
     <Box>
       <AppBar className={classes.appBar}>
         <Toolbar className={classes.container}>
-          <Link href="/" className={classes.link}>
-            <Typography variant="h4" color="primary" className={classes.brand}>
-              Food Help
-            </Typography>
-          </Link>
+          <Typography
+            variant="h4"
+            color="primary"
+            className={classes.brand}
+            onClick={() => history.push('/')}
+          >
+            Food Help
+          </Typography>
           <Hidden smDown implementation="css">
             {renderLinks()}
           </Hidden>
@@ -219,26 +223,23 @@ const useStyles = makeStyles((theme: Theme) =>
       display: 'block',
       width: 'auto',
       margin: 0,
+      cursor: 'pointer',
       padding: theme.spacing(0, 2),
+      '&:hover,&:focus': {
+        color: theme.palette.primary.main,
+      },
       [theme.breakpoints.down('sm')]: {
         width: '100%',
         padding: theme.spacing(1, 2),
       },
     },
-    link: {
-      textDecoration: 'none',
-      color: 'inherit',
-      '&:hover,&:focus': {
-        color: theme.palette.primary.main,
-        textDecoration: 'none',
-      },
-    },
-    linkActive: {
+    listItemActive: {
       color: theme.palette.primary.main,
       fontWeight: 'bold',
     },
     brand: {
       fontWeight: 'bold',
+      cursor: 'pointer',
     },
   }),
 );

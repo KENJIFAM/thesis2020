@@ -3,6 +3,7 @@ import { useDispatch } from 'react-redux';
 import { BrowserRouter as Router, Route, Switch, Redirect } from 'react-router-dom';
 import Layout from './views/Layout';
 import Home from './views/Home';
+import Requests from './views/Requests';
 import { validToken, initialAuth, logOut } from './store/authSlice';
 
 const App = () => {
@@ -20,7 +21,7 @@ const App = () => {
     <Router>
       <Layout>
         <Switch>
-          <Route path="/requests" component={Home} />
+          <Route path="/requests" component={Requests} />
           <Route path="/messages" component={Home} />
           <Route path="/about" component={Home} />
           <Route exact path="/" component={Home} />

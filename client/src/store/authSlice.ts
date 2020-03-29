@@ -89,8 +89,11 @@ export const auth = (
   }
 };
 
-export const initialAuth = (): AppThunk => async (dispatch) => {
+export const initialAuth = (): AppThunk => async (dispatch, getState) => {
   try {
+    if (getState().auth.isLoggedIn) {
+      return;
+    }
     const token = getToken();
     const payload = getTokenPayload();
     if (!token || !payload) {
