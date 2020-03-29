@@ -1,10 +1,10 @@
 import express from 'express';
-import auth, { AuthRequest } from '../middleware/auth';
+import { AuthRequest } from '../middleware/auth';
 import db, { UserModel } from '../models';
 
 const router = express.Router();
 
-router.get('/', auth, async (req: AuthRequest, res, next) => {
+router.get('/', async (req: AuthRequest, res, next) => {
   try {
     if (!req.auth?.id) {
       return next({ status: 401, message: 'Unauthorized error: private profile' });
