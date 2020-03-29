@@ -49,13 +49,13 @@ const Navbar = () => {
       {isLoggedIn && (
         <>
           <ListItem className={classes.listItem}>
-            <Link className={classes.link} href="/partners">
-              Partners
+            <Link className={classes.link} href="/requests">
+              Requests
             </Link>
           </ListItem>
           <ListItem className={classes.listItem}>
-            <Link className={classes.link} href="/requests">
-              Requests
+            <Link className={classes.link} href="/messages">
+              Messages
             </Link>
           </ListItem>
         </>

@@ -94,7 +94,7 @@ const AuthDialog = ({ open, onClose, isSignUp, setIsSignUp }: Props) => {
     if (isLoggedIn) {
       onClose();
     }
-  }, [isLoggedIn]);
+  }, [isLoggedIn, onClose]);
 
   const handleChange = (
     formField: FormFieldProps<string>,
