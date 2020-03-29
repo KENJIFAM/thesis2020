@@ -17,11 +17,11 @@ import {
   CircularProgress,
   FormHelperText,
 } from '@material-ui/core';
-import useFormField, { FormFieldProps } from '../hooks/useFormField';
-import { isValidEmail } from '../services/utils';
-import { auth, authReset } from '../store/authSlice';
-import { LogInFormData, SignUpFormData } from '../services/types';
-import { RootState } from '../store/rootReducer';
+import useFormField, { FormFieldProps } from '../../hooks/useFormField';
+import { isValidEmail } from '../../services/utils';
+import { auth, authReset } from '../../store/authSlice';
+import { LogInFormData, SignUpFormData } from '../../services/types';
+import { RootState } from '../../store/rootReducer';
 
 type LogInField = 'email' | 'password';
 type SignUpField = LogInField | 'orgType' | 'orgName';
