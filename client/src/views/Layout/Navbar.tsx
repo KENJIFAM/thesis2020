@@ -17,9 +17,16 @@ import {
 } from '@material-ui/core';
 import Menu from '@material-ui/icons/Menu';
 import classNames from 'classnames';
-import AuthDialog from '../../components/AuthDialog';
+import AuthDialog from './AuthDialog';
 import { RootState } from '../../store/rootReducer';
 import { logOut } from '../../store/authSlice';
+
+const MENUS = [
+  { path: '/', label: 'Home', auth: false },
+  { path: '/requests', label: 'Requests', auth: true },
+  { path: '/messages', label: 'Messages', auth: true },
+  { path: '/about', label: 'About us', auth: false },
+];
 
 const Navbar = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -34,6 +41,7 @@ const Navbar = () => {
   const handleDrawerToggle = () => setMobileOpen(!mobileOpen);
 
   const openAuthDialog = (isSignUp: boolean = false) => {
+    setMobileOpen(false);
     setIsSignUp(isSignUp);
     setAuthOpen(true);
   };
@@ -44,40 +52,17 @@ const Navbar = () => {
 
   const renderLinks = () => (
     <List className={classes.list}>
-      <ListItem
-        className={classNames(classes.listItem, pathname === '/' && classes.listItemActive)}
-        onClick={() => history.push('/')}
-      >
-        Home
-      </ListItem>
-      {isLoggedIn && (
-        <>
-          <ListItem
-            className={classNames(
-              classes.listItem,
-              pathname === '/requests' && classes.listItemActive,
-            )}
-            onClick={() => history.push('/requests')}
-          >
-            Requests
-          </ListItem>
-          <ListItem
-            className={classNames(
-              classes.listItem,
-              pathname === '/messages' && classes.listItemActive,
-            )}
-            onClick={() => history.push('/messages')}
-          >
-            Messages
-          </ListItem>
-        </>
-      )}
-      <ListItem
-        className={classNames(classes.listItem, pathname === '/about' && classes.listItemActive)}
-        onClick={() => history.push('/about')}
-      >
-        About us
-      </ListItem>
+      {MENUS.filter((item) => !item.auth || isLoggedIn).map((item) => (
+        <ListItem
+          className={classNames(classes.listItem, pathname === item.path && classes.listItemActive)}
+          onClick={() => {
+            setMobileOpen(false);
+            history.push(item.path);
+          }}
+        >
+          {item.label}
+        </ListItem>
+      ))}
       {isLoggedIn ? (
         <ListItem className={classes.listItem}>
           <Button variant="outlined" color="primary" onClick={handleLogOut}>
@@ -106,7 +91,7 @@ const Navbar = () => {
       <AppBar className={classes.appBar}>
         <Toolbar className={classes.container}>
           <Typography
-            variant="h4"
+            variant="h2"
             color="primary"
             className={classes.brand}
             onClick={() => history.push('/')}
