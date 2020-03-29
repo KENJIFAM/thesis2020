@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useLocation } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { createStyles, makeStyles } from '@material-ui/core/styles';
 import {
@@ -16,6 +17,7 @@ import {
   Button,
 } from '@material-ui/core';
 import Menu from '@material-ui/icons/Menu';
+import classNames from 'classnames';
 import AuthDialog from '../../components/AuthDialog';
 import { RootState } from '../../store/rootReducer';
 import { logOut } from '../../store/authSlice';
@@ -25,6 +27,7 @@ const Navbar = () => {
   const [authOpen, setAuthOpen] = useState(false);
   const [isSignUp, setIsSignUp] = useState(false);
   const classes = useStyles();
+  const { pathname } = useLocation();
   const dispatch = useDispatch();
   const isLoggedIn = useSelector((state: RootState) => state.auth.isLoggedIn);
 
@@ -42,26 +45,35 @@ const Navbar = () => {
   const renderLinks = () => (
     <List className={classes.list}>
       <ListItem className={classes.listItem}>
-        <Link className={classes.link} href="/">
+        <Link className={classNames(classes.link, pathname === '/' && classes.linkActive)} href="/">
           Home
         </Link>
       </ListItem>
       {isLoggedIn && (
         <>
           <ListItem className={classes.listItem}>
-            <Link className={classes.link} href="/requests">
+            <Link
+              className={classNames(classes.link, pathname === '/requests' && classes.linkActive)}
+              href="/requests"
+            >
               Requests
             </Link>
           </ListItem>
           <ListItem className={classes.listItem}>
-            <Link className={classes.link} href="/messages">
+            <Link
+              className={classNames(classes.link, pathname === '/messages' && classes.linkActive)}
+              href="/messages"
+            >
               Messages
             </Link>
           </ListItem>
         </>
       )}
       <ListItem className={classes.listItem}>
-        <Link className={classes.link} href="/about">
+        <Link
+          className={classNames(classes.link, pathname === '/about' && classes.linkActive)}
+          href="/about"
+        >
           About us
         </Link>
       </ListItem>
@@ -220,6 +232,10 @@ const useStyles = makeStyles((theme: Theme) =>
         color: theme.palette.primary.main,
         textDecoration: 'none',
       },
+    },
+    linkActive: {
+      color: theme.palette.primary.main,
+      fontWeight: 'bold',
     },
     brand: {
       fontWeight: 'bold',
