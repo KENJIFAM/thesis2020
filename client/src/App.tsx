@@ -1,10 +1,11 @@
 import React, { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { BrowserRouter as Router, Route, Switch, Redirect } from 'react-router-dom';
+import { validToken, initialAuth, logOut } from './store/authSlice';
 import Layout from './views/Layout';
 import Home from './views/Home';
 import Requests from './views/Requests';
-import { validToken, initialAuth, logOut } from './store/authSlice';
+import NewRequest from './views/Requests/NewRequest';
 
 const App = () => {
   const dispatch = useDispatch();
@@ -21,7 +22,8 @@ const App = () => {
     <Router>
       <Layout>
         <Switch>
-          <Route path="/requests" component={Requests} />
+          <Route exact path="/requests" component={Requests} />
+          <Route path="/requests/new" component={NewRequest} />
           <Route path="/messages" component={Home} />
           <Route path="/about" component={Home} />
           <Route exact path="/" component={Home} />
