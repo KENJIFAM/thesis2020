@@ -54,6 +54,7 @@ const Navbar = () => {
     <List className={classes.list}>
       {MENUS.filter((item) => !item.auth || isLoggedIn).map((item) => (
         <ListItem
+          key={item.label}
           className={classNames(classes.listItem, pathname === item.path && classes.listItemActive)}
           onClick={() => {
             setMobileOpen(false);
