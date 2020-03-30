@@ -62,4 +62,24 @@ export const {
   getRequestFail,
 } = requestsSlice.actions;
 
+export const fetchRequests = (): AppThunk => async (dispatch) => {
+  try {
+    dispatch(getRequestsStart());
+    const requests: AxiosResponse<Request[]> = await axios.get('/requests');
+    dispatch(getRequestsSuccess(requests.data));
+  } catch (e) {
+    dispatch(getRequestsFail(e.response.data.error));
+  }
+};
+
+export const fetchRequest = (requestId: string): AppThunk => async (dispatch) => {
+  try {
+    dispatch(getRequestStart());
+    const requests: AxiosResponse<Request> = await axios.get(`/requests/${requestId}`);
+    dispatch(getRequestSuccess(requests.data));
+  } catch (e) {
+    dispatch(getRequestFail(e.response.data.error));
+  }
+};
+
 export default requestsSlice.reducer;

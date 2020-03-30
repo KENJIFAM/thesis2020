@@ -32,6 +32,7 @@ const authSlice = createSlice({
     authStart: (state): AuthState => ({
       ...state,
       isLoading: true,
+      error: null,
     }),
     authSuccess: (state, action: PayloadAction<User>): AuthState => ({
       ...state,
