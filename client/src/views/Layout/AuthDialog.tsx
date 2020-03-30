@@ -152,7 +152,7 @@ const AuthDialog = ({ open, onClose, isSignUp, setIsSignUp }: Props) => {
               name="email"
               value={email.value}
               onChange={(e) => handleChange(email, e)}
-              margin="none"
+              margin="normal"
               type="text"
               autoComplete="username"
               error={Boolean(email.error)}
@@ -170,7 +170,7 @@ const AuthDialog = ({ open, onClose, isSignUp, setIsSignUp }: Props) => {
               name="password"
               value={password.value}
               onChange={(e) => handleChange(password, e)}
-              margin="none"
+              margin="normal"
               type="password"
               autoComplete="current-password"
               error={Boolean(password.error)}
@@ -189,7 +189,7 @@ const AuthDialog = ({ open, onClose, isSignUp, setIsSignUp }: Props) => {
                   name="orgType"
                   value={orgType.value}
                   onChange={(e) => handleChange(orgType, e)}
-                  margin="none"
+                  margin="normal"
                   error={Boolean(orgType.error)}
                   helperText={orgType.error}
                   required
@@ -210,7 +210,7 @@ const AuthDialog = ({ open, onClose, isSignUp, setIsSignUp }: Props) => {
                   name="text"
                   value={orgName.value}
                   onChange={(e) => handleChange(orgName, e)}
-                  margin="none"
+                  margin="normal"
                   type="text"
                   error={Boolean(orgName.error)}
                   helperText={orgName.error}
@@ -273,9 +273,6 @@ const useStyles = makeStyles((theme: Theme) =>
     dialogContent: {
       maxWidth: 400,
       margin: '0 auto',
-      '& .MuiTextField-root': {
-        margin: theme.spacing(1),
-      },
     },
     controlButtons: {
       display: 'flex',
