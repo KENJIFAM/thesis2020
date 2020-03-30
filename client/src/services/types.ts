@@ -1,8 +1,22 @@
-export interface User {
+export interface BaseUser {
   id: string;
-  email: string;
   orgType: 'SUPERMARKET' | 'NON-PROFIT' | 'BUSINESS';
   orgName: string;
+}
+
+export interface User extends BaseUser {
+  email: string;
+}
+
+export interface Request {
+  id: string;
+  message: string;
+  place: string;
+  startTime: string;
+  endTime: string;
+  foodList: string;
+  user: BaseUser;
+  reqType: 'offer' | 'need';
 }
 
 export interface ErrorResponse {
