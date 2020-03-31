@@ -2,7 +2,7 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import axios from '../apis';
 import type { AxiosResponse } from 'axios';
 import type { AppThunk } from '.';
-import type { Request } from '../services/types';
+import type { Request, RequestFormData } from '../services/types';
 
 export interface RequestsState {
   data: Record<string, Request>;
@@ -62,6 +62,23 @@ export const fetchRequest = (requestId: string): AppThunk => async (dispatch, ge
   try {
     dispatch(updateRequestsStart());
     const request: AxiosResponse<Request> = await axios.get(`/requests/${requestId}`);
+    const requestsRecord = {
+      ...getState().requests.data,
+      [request.data.id]: request.data,
+    };
+    dispatch(updateRequestsSuccess(requestsRecord));
+  } catch (e) {
+    dispatch(updateRequestsFail(e.response.data.error));
+  }
+};
+
+export const createRequest = (requestFormData: RequestFormData): AppThunk => async (
+  dispatch,
+  getState,
+) => {
+  try {
+    dispatch(updateRequestsStart());
+    const request: AxiosResponse<Request> = await axios.post('/requests', requestFormData);
     const requestsRecord = {
       ...getState().requests.data,
       [request.data.id]: request.data,

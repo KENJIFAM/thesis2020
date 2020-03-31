@@ -1,3 +1,5 @@
+// Auth
+
 export interface BaseUser {
   id: string;
   orgType: 'SUPERMARKET' | 'NON-PROFIT' | 'BUSINESS';
@@ -6,17 +8,6 @@ export interface BaseUser {
 
 export interface User extends BaseUser {
   email: string;
-}
-
-export interface Request {
-  id: string;
-  message: string;
-  place: string;
-  startTime: string;
-  endTime: string;
-  foodList: string;
-  user: BaseUser;
-  reqType: 'offer' | 'need';
 }
 
 export interface ErrorResponse {
@@ -43,3 +34,21 @@ export interface TokenPayload {
   iat: string;
   exp: string;
 }
+
+// Request
+
+export interface RequestBase {
+  message: string;
+  place: string;
+  startTime: string;
+  endTime: string;
+  foodList: string;
+  reqType: 'offer' | 'need';
+}
+
+export interface Request extends RequestBase {
+  id: string;
+  user: BaseUser;
+}
+
+export type RequestFormData = RequestBase;
