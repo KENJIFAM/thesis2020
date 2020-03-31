@@ -5,80 +5,70 @@ import type { AppThunk } from '.';
 import type { Request } from '../services/types';
 
 export interface RequestsState {
-  requests: Record<string, Request>;
+  data: Record<string, Request>;
   isLoading: boolean;
   error: string | null;
 }
 
 const initialState: RequestsState = {
-  requests: {},
+  data: {},
   isLoading: false,
   error: null,
 };
-
-const loadingStart = (state: RequestsState) => ({ ...state, error: null, isLoading: true });
-
-const loadingFail = (state: RequestsState, action: PayloadAction<string>) => ({
-  ...state,
-  error: action.payload,
-  isLoading: false,
-});
 
 const requestsSlice = createSlice({
   name: 'requests',
   initialState,
   reducers: {
-    getRequestsStart: loadingStart,
-    getRequestStart: loadingStart,
-    getRequestsSuccess: (state, action: PayloadAction<Request[]>): RequestsState => ({
+    updateRequestsStart: (state: RequestsState) => ({ ...state, error: null, isLoading: true }),
+    updateRequestsSuccess: (
+      state,
+      action: PayloadAction<Record<string, Request>>,
+    ): RequestsState => ({
       ...state,
       isLoading: false,
       error: null,
-      requests: action.payload.reduce((record, request) => {
-        record[request.id] = request;
-        return record;
-      }, {} as Record<string, Request>),
+      data: action.payload,
     }),
-    getRequestSuccess: (state, action: PayloadAction<Request>): RequestsState => ({
+    updateRequestsFail: (state: RequestsState, action: PayloadAction<string>) => ({
       ...state,
+      error: action.payload,
       isLoading: false,
-      error: null,
-      requests: {
-        ...state.requests,
-        [action.payload.id]: action.payload,
-      },
     }),
-    getRequestsFail: loadingFail,
-    getRequestFail: loadingFail,
   },
 });
 
 export const {
-  getRequestsStart,
-  getRequestStart,
-  getRequestsSuccess,
-  getRequestSuccess,
-  getRequestsFail,
-  getRequestFail,
+  updateRequestsStart,
+  updateRequestsSuccess,
+  updateRequestsFail,
 } = requestsSlice.actions;
 
 export const fetchRequests = (): AppThunk => async (dispatch) => {
   try {
-    dispatch(getRequestsStart());
+    dispatch(updateRequestsStart());
     const requests: AxiosResponse<Request[]> = await axios.get('/requests');
-    dispatch(getRequestsSuccess(requests.data));
+    const requestsRecord = requests.data.reduce((record, request) => {
+      record[request.id] = request;
+      return record;
+    }, {} as Record<string, Request>);
+    dispatch(updateRequestsSuccess(requestsRecord));
   } catch (e) {
-    dispatch(getRequestsFail(e.response.data.error));
+    dispatch(updateRequestsFail(e.response.data.error));
   }
 };
 
-export const fetchRequest = (requestId: string): AppThunk => async (dispatch) => {
+export const fetchRequest = (requestId: string): AppThunk => async (dispatch, getState) => {
   try {
-    dispatch(getRequestStart());
-    const requests: AxiosResponse<Request> = await axios.get(`/requests/${requestId}`);
-    dispatch(getRequestSuccess(requests.data));
+    dispatch(updateRequestsStart());
+    const request: AxiosResponse<Request> = await axios.get(`/requests/${requestId}`);
+    const requestsRecord = {
+      ...getState().requests.data,
+      [request.data.id]: request.data,
+    };
+    dispatch(updateRequestsSuccess(requestsRecord));
   } catch (e) {
-    dispatch(getRequestFail(e.response.data.error));
+    dispatch(updateRequestsFail(e.response.data.error));
   }
 };
 
