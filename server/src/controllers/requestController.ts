@@ -10,7 +10,10 @@ const router = express.Router();
 router.post('/', async (req: AuthRequest, res, next) => {
   try {
     const user = (await db.User.findById(req.auth?.id).orFail()) as UserModel;
-    const request = await db.Request.create(req.body);
+    const request = await db.Request.create({
+      ...req.body,
+      user: req.auth?.id,
+    });
     user.requests.push(request.id);
     await user.save();
     const foundRequest = await db.Request.findById(request.id).populate(

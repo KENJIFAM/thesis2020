@@ -9,7 +9,7 @@ export interface UserModel extends Document {
   password: string;
   orgType: 'SUPERMARKET' | 'NON-PROFIT' | 'BUSINESS';
   orgName: string;
-  requests: mongoose.Types.Array<RequestModel>;
+  requests: mongoose.Types.Array<RequestModel['id']>;
   validatePassword: (password: string, next: HookNextFunction) => Promise<boolean>;
   generateJwt: (next: HookNextFunction) => Promise<string>;
 }
@@ -29,6 +29,8 @@ const userSchema = new mongoose.Schema<UserModel>(
   },
   {
     timestamps: true,
+    toJSON: { virtuals: true },
+    toObject: { virtuals: true },
   },
 );
 
@@ -57,7 +59,7 @@ userSchema.methods.validatePassword = async function (inputPassword, next): Prom
 userSchema.methods.generateJwt = async function (next): Promise<string> {
   try {
     const { id }: JwtPayload = this;
-    return jwt.sign({ id }, process.env.SECRET_KEY as string, { expiresIn: '1h' });
+    return jwt.sign({ id }, process.env.SECRET_KEY as string, { expiresIn: '6h' });
   } catch (err) {
     return next(err);
   }
