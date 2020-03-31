@@ -103,7 +103,9 @@ export const initialAuth = (): AppThunk => async (dispatch, getState) => {
     setTokenHeader(token);
     const user: AxiosResponse<User> = await axios.get('/profile');
     dispatch(authSuccess(user.data));
-  } catch (e) {}
+  } catch (e) {
+    dispatch(authReset());
+  }
 };
 
 export default authSlice.reducer;

@@ -20,15 +20,8 @@ import {
 import useFormField, { FormFieldProps } from '../../hooks/useFormField';
 import { isValidEmail } from '../../services/utils';
 import { auth, authReset } from '../../store/authSlice';
-import { LogInFormData, SignUpFormData } from '../../services/types';
+import { AuthForm, AuthFormData } from '../../services/types';
 import { RootState } from '../../store/rootReducer';
-
-type LogInField = 'email' | 'password';
-type SignUpField = LogInField | 'orgType' | 'orgName';
-
-type AuthForm =
-  | { [key in LogInField]: FormFieldProps<string> }
-  | { [key in SignUpField]: FormFieldProps<string> };
 
 interface Props {
   open: boolean;
@@ -71,7 +64,7 @@ const validateForm = (form: AuthForm): boolean =>
     })
     .reduce((res, field) => res && field, true);
 
-const createAuthFormData = (form: AuthForm): LogInFormData | SignUpFormData =>
+const createAuthFormData = (form: AuthForm): AuthFormData =>
   Object.fromEntries(Object.entries(form).map(([name, field]) => [name, field.value])) as {
     [K in keyof AuthForm]: string;
   };

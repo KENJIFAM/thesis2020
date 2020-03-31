@@ -1,14 +1,35 @@
 import React from 'react';
 import { useHistory } from 'react-router-dom';
+import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
-import { Typography, Box, TextField, Button, CircularProgress, Grid } from '@material-ui/core';
+import {
+  Typography,
+  Box,
+  TextField,
+  Button,
+  CircularProgress,
+  Grid,
+  FormHelperText,
+} from '@material-ui/core';
 import { KeyboardDateTimePicker, MuiPickersUtilsProvider } from '@material-ui/pickers';
 import MomentUtils from '@date-io/moment';
 import moment, { Moment } from 'moment';
 import useFormField, { FormFieldProps } from '../../hooks/useFormField';
+import { RequestForm, RequestFormData } from '../../services/types';
+import { RootState } from '../../store/rootReducer';
+import { createRequest } from '../../store/requestsSlice';
 
 const validateFormField = (name: string, value: string): string =>
   value.length < 3 ? `${name} must be at least 3 characters` : '';
+
+const validateForm = (form: RequestForm): boolean =>
+  Object.entries(form)
+    .map(([name, field]) => {
+      const error = validateFormField(name, field.value);
+      field.setError(error);
+      return !error;
+    })
+    .reduce((res, field) => res && field, true);
 
 const NewRequest = () => {
   const message = useFormField<string>('');
@@ -18,6 +39,9 @@ const NewRequest = () => {
   const foodList = useFormField<string>('');
   const classes = useStyles();
   const history = useHistory();
+  const dispatch = useDispatch();
+  const user = useSelector((state: RootState) => state.auth.user, shallowEqual);
+  const { isLoading, error } = useSelector((state: RootState) => state.requests, shallowEqual);
 
   const handleChange = (
     formField: FormFieldProps<string>,
@@ -32,7 +56,23 @@ const NewRequest = () => {
 
   const handleCancel = () => history.replace('/requests');
 
-  const onSubmit = () => {};
+  const onSubmit = async () => {
+    if (!validateForm({ message, place, startTime, endTime, foodList })) {
+      return;
+    }
+    const formData: RequestFormData = {
+      message: message.value,
+      place: place.value,
+      startTime: startTime.value?.toISOString() ?? '',
+      endTime: endTime.value?.toISOString() ?? '',
+      foodList: foodList.value,
+      reqType: user?.orgType === 'SUPERMARKET' ? 'offer' : 'need',
+    };
+    await dispatch(createRequest(formData));
+    if (!error) {
+      history.replace('/requests');
+    }
+  };
 
   return (
     <Box className={classes.container}>
@@ -126,19 +166,18 @@ const NewRequest = () => {
               shrink: true,
             }}
           />
-          {/* <FormHelperText error variant="outlined">
+          <FormHelperText error variant="outlined">
             {error}
-          </FormHelperText> */}
+          </FormHelperText>
           <Box className={classes.controlButtons}>
             <Button
               onClick={onSubmit}
               variant="contained"
               color="primary"
               className={classes.button}
-              // disabled={isLoading}
+              disabled={isLoading}
             >
-              {/* {isLoading ? <CircularProgress size={20} /> : isSignUp ? 'Sign up' : 'Log in'} */}
-              Create request
+              {isLoading ? <CircularProgress size={20} /> : 'Create request'}
             </Button>
             <Button
               onClick={handleCancel}
