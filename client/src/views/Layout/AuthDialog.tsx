@@ -32,7 +32,7 @@ interface Props {
 
 const orgTypes = [
   { value: 'SUPERMARKET', label: 'Supermarket' },
-  { value: 'NON-PROFIT', label: 'Non-profit organization' },
+  { value: 'NONPROFIT', label: 'Non-profit organization' },
   { value: 'RESTAURANT', label: 'Restaurant' },
   { value: 'CAFETERIA', label: 'Cafeteria' },
 ];

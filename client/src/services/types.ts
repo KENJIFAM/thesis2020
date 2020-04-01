@@ -5,7 +5,7 @@ import type { Moment } from 'moment';
 
 export interface BaseUser {
   id: string;
-  orgType: 'SUPERMARKET' | 'NON-PROFIT' | 'RESTAURANT' | 'CAFETERIA';
+  orgType: 'SUPERMARKET' | 'NONPROFIT' | 'RESTAURANT' | 'CAFETERIA';
   orgName: string;
 }
 
@@ -34,7 +34,7 @@ export interface LogInFormData {
 }
 
 export interface SignUpFormData extends LogInFormData {
-  orgType: 'SUPERMARKET' | 'NON-PROFIT' | 'RESTAURANT' | 'CAFETERIA';
+  orgType: 'SUPERMARKET' | 'NONPROFIT' | 'RESTAURANT' | 'CAFETERIA';
   orgName: string;
 }
 
