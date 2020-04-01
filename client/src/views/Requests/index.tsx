@@ -4,7 +4,7 @@ import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import { Typography, Paper, Box, Tabs, Tab } from '@material-ui/core';
 import classNames from 'classnames';
 import LinkButton from '../../components/LinkButton';
-import { fetchRequests } from '../../store/requestsSlice';
+import { fetchRequests, deleteRequest } from '../../store/requestsSlice';
 import { RootState } from '../../store/rootReducer';
 import RequestCard from '../../components/RequestCard';
 import { Request } from '../../services/types';
@@ -14,7 +14,7 @@ const Requests = () => {
   const [tab, setTab] = useState<Request['reqType']>('offer');
   const classes = useStyles();
   const dispatch = useDispatch();
-  const { isLoggedIn, isLoading: authLoading } = useSelector(
+  const { isLoggedIn, isLoading: authLoading, user } = useSelector(
     (state: RootState) => state.auth,
     shallowEqual,
   );
@@ -31,6 +31,10 @@ const Requests = () => {
       dispatch(fetchRequests());
     }
   }, [isLoggedIn, dispatch]);
+
+  const handleDeleteRequest = (id: string) => {
+    dispatch(deleteRequest(id));
+  };
 
   const renderTabs = () => (
     <Paper square className={classes.tabs}>
@@ -68,7 +72,12 @@ const Requests = () => {
         </LinkButton>
       </Box>
       {requestsToRender.map(([id, request]) => (
-        <RequestCard key={id} request={request} />
+        <RequestCard
+          key={id}
+          request={request}
+          userId={user?.id}
+          deleteRequest={handleDeleteRequest}
+        />
       ))}
     </Box>
   );

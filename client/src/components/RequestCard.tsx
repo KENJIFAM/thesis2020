@@ -1,15 +1,19 @@
 import React from 'react';
 import { makeStyles, createStyles } from '@material-ui/core/styles';
-import { Card, CardContent, Typography, Theme, Box } from '@material-ui/core';
+import { Card, CardContent, Typography, Theme, Box, IconButton } from '@material-ui/core';
 import LocalGroceryStoreIcon from '@material-ui/icons/LocalGroceryStore';
 import EcoIcon from '@material-ui/icons/Eco';
 import RestaurantIcon from '@material-ui/icons/Restaurant';
 import LocalCafeIcon from '@material-ui/icons/LocalCafe';
+import DeleteIcon from '@material-ui/icons/Delete';
+import EditIcon from '@material-ui/icons/Edit';
 import moment from 'moment';
 import { Request, User } from '../services/types';
 
 interface Props {
   request: Request;
+  deleteRequest: (id: string) => void;
+  userId?: string;
 }
 
 const mapOrgTypeToIcon = (orgType: User['orgType']) =>
@@ -20,23 +24,38 @@ const mapOrgTypeToIcon = (orgType: User['orgType']) =>
     CAFETERIA: LocalCafeIcon,
   }[orgType]);
 
-const RequestCard = ({ request }: Props) => {
-  const { message, startTime, endTime, foodList, user, createdAt } = request;
+const RequestCard = ({ request, userId, deleteRequest }: Props) => {
+  const { id, message, startTime, endTime, foodList, user, createdAt } = request;
   const { orgName, orgType } = user;
   const classes = useStyles();
   const Icon = mapOrgTypeToIcon(orgType);
+
+  const renderButtons = () =>
+    userId === user.id && (
+      <Box>
+        <IconButton className={classes.editButton}>
+          <EditIcon />
+        </IconButton>
+        <IconButton className={classes.deleteButton} onClick={() => deleteRequest(id)}>
+          <DeleteIcon />
+        </IconButton>
+      </Box>
+    );
 
   return (
     <Card className={classes.root}>
       <Box className={classes.mediaContainer}>
         <Icon className={classes.media} />
       </Box>
-      <CardContent>
-        <Box>
-          <Typography variant="h6">{orgName}</Typography>
-          <Typography gutterBottom variant="caption" component="p">
-            {moment(createdAt).fromNow()}
-          </Typography>
+      <CardContent className={classes.cardContent}>
+        <Box className={classes.header}>
+          <Box>
+            <Typography variant="h6">{orgName}</Typography>
+            <Typography gutterBottom variant="caption" component="p">
+              {moment(createdAt).fromNow()}
+            </Typography>
+          </Box>
+          {renderButtons()}
         </Box>
         <Typography variant="body2">{message}</Typography>
         <Typography variant="body2">Time available:</Typography>
@@ -73,6 +92,23 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     media: {
       fontSize: 80,
+    },
+    cardContent: {
+      width: '100%',
+    },
+    header: {
+      display: 'flex',
+      justifyContent: 'space-between',
+    },
+    editButton: {
+      '&:hover': {
+        color: theme.palette.primary.main,
+      },
+    },
+    deleteButton: {
+      '&:hover': {
+        color: theme.palette.error.main,
+      },
     },
     fieldContent: {
       paddingLeft: theme.spacing(2),

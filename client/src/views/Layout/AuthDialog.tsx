@@ -222,6 +222,7 @@ const AuthDialog = ({ open, onClose, isSignUp, setIsSignUp }: Props) => {
             <Box className={classes.controlButtons}>
               <Button
                 onClick={onSubmit}
+                type="submit"
                 variant="contained"
                 color="primary"
                 className={classes.button}
