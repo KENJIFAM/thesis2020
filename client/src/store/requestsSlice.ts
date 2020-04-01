@@ -89,4 +89,35 @@ export const createRequest = (requestFormData: RequestFormData): AppThunk => asy
   }
 };
 
+export const editRequest = (
+  requestId: string,
+  requestFormData: Partial<RequestFormData>,
+): AppThunk => async (dispatch, getState) => {
+  try {
+    dispatch(updateRequestsStart());
+    const request: AxiosResponse<Request> = await axios.patch(
+      `/requests/${requestId}`,
+      requestFormData,
+    );
+    const requestsRecord = {
+      ...getState().requests.data,
+      [request.data.id]: request.data,
+    };
+    dispatch(updateRequestsSuccess(requestsRecord));
+  } catch (e) {
+    dispatch(updateRequestsFail(e.response.data.error));
+  }
+};
+
+export const deleteRequest = (requestId: string): AppThunk => async (dispatch, getState) => {
+  try {
+    dispatch(updateRequestsStart());
+    const deletedId: AxiosResponse<{ id: string }> = await axios.delete(`/requests/${requestId}`);
+    const { [deletedId.data.id]: removedRequest, ...requestsRecord } = getState().requests.data;
+    dispatch(updateRequestsSuccess(requestsRecord));
+  } catch (e) {
+    dispatch(updateRequestsFail(e.response.data.error));
+  }
+};
+
 export default requestsSlice.reducer;
