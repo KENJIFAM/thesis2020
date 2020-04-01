@@ -64,6 +64,7 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     mediaContainer: {
       width: 100,
+      minWidth: 100,
       backgroundColor: theme.palette.primary.main,
       color: theme.palette.common.white,
       display: 'flex',

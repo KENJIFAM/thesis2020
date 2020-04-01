@@ -2,17 +2,29 @@ import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import { Typography, Paper, Box, Tabs, Tab } from '@material-ui/core';
+import classNames from 'classnames';
 import LinkButton from '../../components/LinkButton';
 import { fetchRequests } from '../../store/requestsSlice';
 import { RootState } from '../../store/rootReducer';
 import RequestCard from '../../components/RequestCard';
+import { Request } from '../../services/types';
+import Spinner from '../../components/Spinner';
 
 const Requests = () => {
-  const [tab, setTab] = useState(0);
+  const [tab, setTab] = useState<Request['reqType']>('offer');
   const classes = useStyles();
   const dispatch = useDispatch();
-  const requests = useSelector((state: RootState) => state.requests.data, shallowEqual);
-  const { isLoggedIn } = useSelector((state: RootState) => state.auth, shallowEqual);
+  const { isLoggedIn, isLoading: authLoading } = useSelector(
+    (state: RootState) => state.auth,
+    shallowEqual,
+  );
+  const { data: requests, isLoading: requestsLoading } = useSelector(
+    (state: RootState) => state.requests,
+    shallowEqual,
+  );
+  const requestsToRender = Object.entries(requests).filter(
+    ([id, request]) => request.reqType === tab,
+  );
 
   useEffect(() => {
     if (isLoggedIn) {
@@ -26,15 +38,23 @@ const Requests = () => {
         value={tab}
         indicatorColor="primary"
         textColor="primary"
-        onChange={(e, newTab: number) => setTab(newTab)}
+        onChange={(e, newTab: Request['reqType']) => setTab(newTab)}
         variant="fullWidth"
         centered
       >
-        <Tab label="Offers" />
-        <Tab label="Needs" />
+        <Tab value="offer" label="Offers" />
+        <Tab value="need" label="Needs" />
       </Tabs>
     </Paper>
   );
+
+  if (authLoading || requestsLoading) {
+    return (
+      <Box className={classNames(classes.container, classes.spinner)}>
+        <Spinner />
+      </Box>
+    );
+  }
 
   return (
     <Box className={classes.container}>
@@ -47,7 +67,7 @@ const Requests = () => {
           New request
         </LinkButton>
       </Box>
-      {Object.entries(requests).map(([id, request]) => (
+      {requestsToRender.map(([id, request]) => (
         <RequestCard key={id} request={request} />
       ))}
     </Box>
@@ -75,6 +95,12 @@ const useStyles = makeStyles((theme: Theme) =>
       [theme.breakpoints.down('xs')]: {
         padding: theme.spacing(0, 2),
       },
+    },
+    spinner: {
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
+      height: 'calc(100vh - 140px)',
     },
   }),
 );

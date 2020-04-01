@@ -1,5 +1,6 @@
 import React from 'react';
 import { makeStyles, Theme, createStyles } from '@material-ui/core/styles';
+import { CircularProgress } from '@material-ui/core';
 
 interface Props {
   size?: number;
@@ -7,7 +8,11 @@ interface Props {
 
 const Spinner = ({ size = 64 }: Props) => {
   const classes = useStyles(size);
-  return <div className={classes.root} />;
+  return (
+    <div className={classes.root}>
+      <CircularProgress></CircularProgress>
+    </div>
+  );
 };
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -17,7 +22,7 @@ const useStyles = makeStyles((theme: Theme) =>
       width: (size: number) => size,
       height: (size: number) => size,
       borderRadius: '100%',
-      border: (size: number) => `${size / 20}px solid ${theme.palette.primary.main}`,
+      border: (size: number) => `${size / 10}px solid ${theme.palette.primary.light}`,
       borderBottomColor: 'transparent',
       display: 'inline-block',
       animation: '$clip 0.75s 0s infinite linear',
