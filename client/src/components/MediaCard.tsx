@@ -22,15 +22,15 @@ const MediaCard = ({ name, description, image, containedImage = false }: Props) 
 
   return (
     <Card className={classes.root}>
-      <CardActionArea>
+      <CardActionArea className={classes.actionArea}>
         <Box className={classes.mediaContainer}>
           <CardMedia className={classes.media} image={image} title={name} />
         </Box>
         <CardContent>
-          <Typography gutterBottom variant="h5" component="h2">
+          <Typography gutterBottom variant="h5">
             {name}
           </Typography>
-          <Typography variant="body2" color="textSecondary" component="p">
+          <Typography variant="body2" color="textSecondary">
             {description}
           </Typography>
         </CardContent>
@@ -47,6 +47,11 @@ const useStyles = makeStyles((theme: Theme) =>
       [theme.breakpoints.down('xs')]: {
         borderRadius: 0,
       },
+    },
+    actionArea: {
+      height: '100%',
+      flexDirection: 'column',
+      alignItems: 'stretch',
     },
     mediaContainer: {
       width: '100%',

@@ -12,10 +12,13 @@ const Requests = () => {
   const classes = useStyles();
   const dispatch = useDispatch();
   const requests = useSelector((state: RootState) => state.requests.data, shallowEqual);
+  const { isLoggedIn } = useSelector((state: RootState) => state.auth, shallowEqual);
 
   useEffect(() => {
-    dispatch(fetchRequests());
-  }, [dispatch]);
+    if (isLoggedIn) {
+      dispatch(fetchRequests());
+    }
+  }, [isLoggedIn, dispatch]);
 
   const renderTabs = () => (
     <Paper square className={classes.tabs}>
