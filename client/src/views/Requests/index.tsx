@@ -1,19 +1,29 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import { Typography, Paper, Box, Tabs, Tab } from '@material-ui/core';
 import LinkButton from '../../components/LinkButton';
+import { fetchRequests } from '../../store/requestsSlice';
+import { RootState } from '../../store/rootReducer';
+import RequestCard from '../../components/RequestCard';
 
 const Requests = () => {
-  const [value, setValue] = useState(0);
+  const [tab, setTab] = useState(0);
   const classes = useStyles();
+  const dispatch = useDispatch();
+  const requests = useSelector((state: RootState) => state.requests.data, shallowEqual);
+
+  useEffect(() => {
+    dispatch(fetchRequests());
+  }, [dispatch]);
 
   const renderTabs = () => (
     <Paper square className={classes.tabs}>
       <Tabs
-        value={value}
+        value={tab}
         indicatorColor="primary"
         textColor="primary"
-        onChange={(e, newValue: number) => setValue(newValue)}
+        onChange={(e, newTab: number) => setTab(newTab)}
         variant="fullWidth"
         centered
       >
@@ -34,8 +44,9 @@ const Requests = () => {
           New request
         </LinkButton>
       </Box>
-
-      <Paper>Hi</Paper>
+      {Object.entries(requests).map(([id, request]) => (
+        <RequestCard key={id} request={request} />
+      ))}
     </Box>
   );
 };
@@ -58,6 +69,9 @@ const useStyles = makeStyles((theme: Theme) =>
       margin: theme.spacing(2, 0),
       display: 'flex',
       justifyContent: 'flex-end',
+      [theme.breakpoints.down('xs')]: {
+        padding: theme.spacing(0, 2),
+      },
     },
   }),
 );
