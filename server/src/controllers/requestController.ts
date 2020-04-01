@@ -55,14 +55,18 @@ router.get('/:id', async (req, res, next) => {
 /**
  * PATCH request by id
  */
-router.patch('/:id', async (req, res, next) => {
+router.patch('/:id', async (req: AuthRequest, res, next) => {
   try {
-    const request = await db.Request.findOneAndUpdate(
-      { id: req.params.id },
+    const request = await db.Request.findById(req.params.id);
+    if (req.auth?.id !== request?.user) {
+      return next({ status: 401, message: 'Not authorized to edit this request!' });
+    }
+    const editedRequest = await db.Request.updateOne(
+      { id: request?.id },
       { $set: req.body },
       { new: true },
     ).populate('user', 'id orgType orgName');
-    return res.status(200).json(request);
+    return res.status(200).json(editedRequest);
   } catch (err) {
     return next(err);
   }
@@ -71,14 +75,17 @@ router.patch('/:id', async (req, res, next) => {
 /**
  * DELETE request by id
  */
-router.delete('/:id', async (req, res, next) => {
+router.delete('/:id', async (req: AuthRequest, res, next) => {
   try {
     const request = await db.Request.findById(req.params.id);
-    if (request) {
-      await request.remove();
-      return res.status(200).json({ message: 'Request has been deleted!' });
+    if (!request) {
+      return next({ status: 401, message: 'This request does not exist!' });
     }
-    return next({ status: 401, message: 'This request does not exist!' });
+    if (!req.auth?.id || !request.user.equals(req.auth?.id)) {
+      return next({ status: 401, message: 'Not authorized to delete this request!' });
+    }
+    await request.remove();
+    return res.status(200).json({ id: req.params.id });
   } catch (err) {
     return next(err);
   }

@@ -1,5 +1,5 @@
 import mongoose, { Document } from 'mongoose';
-import User, { UserModel } from './User';
+import User from './User';
 
 export interface RequestModel extends Document {
   id: string;
@@ -8,7 +8,7 @@ export interface RequestModel extends Document {
   startTime: Date;
   endTime: Date;
   foodList: string;
-  user: UserModel['id'];
+  user: mongoose.Types.ObjectId;
   reqType: 'offer' | 'need';
 }
 

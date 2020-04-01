@@ -1,7 +1,6 @@
 import mongoose, { Document, HookNextFunction } from 'mongoose';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
-import { RequestModel } from './Request';
 
 export interface UserModel extends Document {
   id: string;
@@ -9,7 +8,7 @@ export interface UserModel extends Document {
   password: string;
   orgType: 'SUPERMARKET' | 'NONPROFIT' | 'RESTAURANT' | 'CAFETERIA';
   orgName: string;
-  requests: mongoose.Types.Array<RequestModel['id']>;
+  requests: mongoose.Types.Array<mongoose.Types.ObjectId>;
   validatePassword: (password: string, next: HookNextFunction) => Promise<boolean>;
   generateJwt: (next: HookNextFunction) => Promise<string>;
 }
