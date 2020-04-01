@@ -42,6 +42,7 @@ const NewRequest = () => {
   const dispatch = useDispatch();
   const user = useSelector((state: RootState) => state.auth.user, shallowEqual);
   const { isLoading, error } = useSelector((state: RootState) => state.requests, shallowEqual);
+  const reqType = user?.orgType === 'SUPERMARKET' ? 'offer' : 'need';
 
   const handleChange = (
     formField: FormFieldProps<string>,
@@ -66,7 +67,7 @@ const NewRequest = () => {
       startTime: startTime.value?.toISOString() ?? '',
       endTime: endTime.value?.toISOString() ?? '',
       foodList: foodList.value,
-      reqType: user?.orgType === 'SUPERMARKET' ? 'offer' : 'need',
+      reqType,
     };
     await dispatch(createRequest(formData));
     if (!error) {
@@ -77,13 +78,13 @@ const NewRequest = () => {
   return (
     <Box className={classes.container}>
       <Typography variant="h3" align="center" gutterBottom>
-        New request
+        {reqType === 'offer' ? 'Offer food?' : 'Need food?'}
       </Typography>
       <Box className={classes.formWrapper}>
         <form onSubmit={onSubmit}>
           <TextField
             label="Message"
-            placeholder="Your message"
+            placeholder={reqType === 'offer' ? 'What do you offer?' : 'What do you need?'}
             name="message"
             value={message.value}
             onChange={(e) => handleChange(message, e)}

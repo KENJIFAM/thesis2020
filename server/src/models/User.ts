@@ -7,7 +7,7 @@ export interface UserModel extends Document {
   id: string;
   email: string;
   password: string;
-  orgType: 'SUPERMARKET' | 'NON-PROFIT' | 'BUSINESS';
+  orgType: 'SUPERMARKET' | 'NON-PROFIT' | 'RESTAURANT' | 'CAFETERIA';
   orgName: string;
   requests: mongoose.Types.Array<RequestModel['id']>;
   validatePassword: (password: string, next: HookNextFunction) => Promise<boolean>;

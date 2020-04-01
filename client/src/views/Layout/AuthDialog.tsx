@@ -33,7 +33,8 @@ interface Props {
 const orgTypes = [
   { value: 'SUPERMARKET', label: 'Supermarket' },
   { value: 'NON-PROFIT', label: 'Non-profit organization' },
-  { value: 'BUSINESS', label: 'Restaurant & Cafeteria' },
+  { value: 'RESTAURANT', label: 'Restaurant' },
+  { value: 'CAFETERIA', label: 'Cafeteria' },
 ];
 
 const validateFormField = (name: string, value: string): string => {
