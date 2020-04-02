@@ -17,7 +17,8 @@
     "express-jwt": "^5.3.3",
     "helmet": "^3.22.0",
     "jsonwebtoken": "^8.5.1",
-    "mongoose": "^5.9.7"
+    "mongoose": "^5.9.7",
+    "socket.io": "^2.3.0"
   },
   "devDependencies": {
     "@types/bcrypt": "^3.0.0",
@@ -29,6 +30,7 @@
     "@types/jsonwebtoken": "^8.3.9",
     "@types/mongoose": "^5.7.10",
     "@types/node": "^13.11.1",
+    "@types/socket.io": "^2.1.4",
     "@typescript-eslint/eslint-plugin": "^2.27.0",
     "@typescript-eslint/parser": "^2.27.0",
     "concurrently": "^5.1.0",
