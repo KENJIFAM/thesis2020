@@ -1,4 +1,4 @@
-import mongoose, { Document, HookNextFunction } from 'mongoose';
+import mongoose, { Document, HookNextFunction, Schema, Types } from 'mongoose';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 
@@ -8,7 +8,8 @@ export interface UserModel extends Document {
   password: string;
   orgType: 'SUPERMARKET' | 'NONPROFIT' | 'RESTAURANT' | 'CAFETERIA';
   orgName: string;
-  requests: mongoose.Types.Array<mongoose.Types.ObjectId>;
+  requests: Types.Array<Types.ObjectId>;
+  chats: Types.Array<Types.ObjectId>;
   validatePassword: (password: string, next: HookNextFunction) => Promise<boolean>;
   generateJwt: (next: HookNextFunction) => Promise<string>;
 }
@@ -18,13 +19,14 @@ export interface JwtPayload {
   email: string;
 }
 
-const userSchema = new mongoose.Schema<UserModel>(
+const userSchema = new Schema<UserModel>(
   {
     email: { type: String, required: true, unique: true },
     password: { type: String, required: true },
     orgType: { type: String, required: true },
     orgName: { type: String, required: true },
-    requests: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Request' }],
+    requests: [{ type: Schema.Types.ObjectId, ref: 'Request' }],
+    chats: [{ type: Schema.Types.ObjectId, ref: 'Chat' }],
   },
   {
     timestamps: true,

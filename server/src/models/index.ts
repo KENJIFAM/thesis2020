@@ -1,9 +1,13 @@
 import mongoose, { ConnectionOptions } from 'mongoose';
 import User from './User';
 import Request from './Request';
+import Chat from './Chat';
+import Message from './Message';
 
 export * from './User';
 export * from './Request';
+export * from './Chat';
+export * from './Message';
 
 const { MONGO_USERNAME, MONGO_PASSWORD, MONGO_HOST, MONGO_DATABASE, MONGO_PORT } = process.env as {
   [key: string]: string;
@@ -28,4 +32,6 @@ mongoose
 export default {
   User,
   Request,
+  Chat,
+  Message,
 };
