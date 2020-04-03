@@ -2,14 +2,14 @@ import mongoose, { Document, HookNextFunction, Schema, Types } from 'mongoose';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 
-export interface UserModel extends Document {
+export interface UserModel<R = Types.ObjectId, C = Types.ObjectId> extends Document {
   id: string;
   email: string;
   password: string;
   orgType: 'SUPERMARKET' | 'NONPROFIT' | 'RESTAURANT' | 'CAFETERIA';
   orgName: string;
-  requests: Types.Array<Types.ObjectId>;
-  chats: Types.Array<Types.ObjectId>;
+  requests: Types.Array<R>;
+  chats: Types.Array<C>;
   validatePassword: (password: string, next: HookNextFunction) => Promise<boolean>;
   generateJwt: (next: HookNextFunction) => Promise<string>;
 }

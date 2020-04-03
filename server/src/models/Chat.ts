@@ -1,14 +1,15 @@
 import mongoose, { Document, Schema, Types } from 'mongoose';
 
-export interface ChatModel extends Document {
+export interface ChatModel<U = Types.ObjectId, M = Types.ObjectId> extends Document {
   id: string;
-  users: Types.ObjectId[];
-  lastMessage?: Types.ObjectId;
+  users: Types.Array<U>;
+  lastMessage?: M;
+  createdAt: Date;
 }
 
 const chatSchema = new Schema<ChatModel>(
   {
-    user: [{ type: Schema.Types.ObjectId, ref: 'User' }],
+    users: [{ type: Schema.Types.ObjectId, ref: 'User' }],
     lastMessage: { type: Schema.Types.ObjectId, ref: 'Message' },
   },
   {
