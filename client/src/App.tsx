@@ -6,6 +6,7 @@ import Layout from './views/Layout';
 import Home from './views/Home';
 import Requests from './views/Requests';
 import NewRequest from './views/Requests/NewRequest';
+import Messages from './views/Messages';
 
 const App = () => {
   const dispatch = useDispatch();
@@ -24,7 +25,7 @@ const App = () => {
         <Switch>
           <Route exact path="/requests" component={Requests} />
           <Route path="/requests/new" component={NewRequest} />
-          <Route path="/messages" component={Home} />
+          <Route path="/messages" component={Messages} />
           <Route path="/about" component={Home} />
           <Route exact path="/" component={Home} />
           <Redirect to="/" />
