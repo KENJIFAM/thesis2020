@@ -7,7 +7,8 @@ import socketIo from 'socket.io';
 import authController from './controllers/authController';
 import userController from './controllers/userController';
 import requestController from './controllers/requestController';
-import chatController, { socketController } from './controllers/chatController';
+import chatLiveController, { socketController } from './controllers/chatLiveController';
+import chatController from './controllers/chatController';
 import errorHandler from './middleware/error';
 import auth from './middleware/auth';
 
@@ -22,7 +23,8 @@ app.use(express.urlencoded({ extended: false }));
 app.use('/auth', authController);
 app.use('/profile/', auth, userController);
 app.use('/requests/', auth, requestController);
-app.use('/chat/', chatController);
+app.use('/chats/', auth, chatController);
+app.use('/chatlive/', chatLiveController);
 
 app.get('/*', (req, res) => res.send('Welcome to Food Help APIs!'));
 
@@ -30,7 +32,7 @@ app.use(errorHandler);
 
 const server = http.createServer(app);
 const io = socketIo(server, {
-  path: '/chat',
+  path: '/chatlive',
 });
 
 io.on('connection', (socket) => socketController(socket, io));
