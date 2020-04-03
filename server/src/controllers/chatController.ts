@@ -1,66 +1,67 @@
 import express from 'express';
-import db from '../models';
-import type { Socket, Server } from 'socket.io';
-
-interface Data {
-  content: string;
-  from: string;
-  to: string;
-  chatId?: string;
-}
+import db, { UserModel, ChatModel, MessageModel } from '../models';
+import { updateChatLastMessage, updateUserWithChats } from './chatLiveController';
+import { AuthRequest } from '../middleware/auth';
+import { Types } from 'mongoose';
 
 const router = express.Router();
 
-router.get('/', async (req, res, next) => {
+// POST new message
+router.post('/', async (req, res, next) => {
   try {
-    return res.status(200).json({ message: "I'm live" });
+    if (!req.body.content || !req.body.from || !req.body.to) {
+      return next({ status: 400, message: 'Invalid request!' });
+    }
+    if (req.body.chatId) {
+      const message = await db.Message.create(req.body);
+      const chat = await updateChatLastMessage(req.body.chatId, message.id);
+      return res.status(200).json({ message, chat });
+    }
+    const chat = await db.Chat.create({
+      users: [req.body.from, req.body.to],
+    });
+    const message = await db.Message.create({
+      ...req.body,
+      chatId: chat.id,
+    });
+    const [updatedChat] = await Promise.all([
+      updateChatLastMessage(chat.id, message.id),
+      updateUserWithChats(req.body.from, chat.id),
+      updateUserWithChats(req.body.to, chat.id),
+    ]);
+    return res.status(200).json({ message, chat: updatedChat });
   } catch (err) {
     return next(err);
   }
 });
 
-const updateUserWithChats = async (id: string, chatId: string) => {
-  const user = await db.User.findById(id);
-  user?.chats.push(chatId);
-  await user?.save();
-};
+// GET chats list
+router.get('/', async (req: AuthRequest, res, next) => {
+  try {
+    const user = (await db.User.findById(req.auth?.id)?.populate({
+      path: 'chats',
+      populate: [{ path: 'users', select: 'id orgType orgName' }, { path: 'lastMessage' }],
+    })) as UserModel<Types.ObjectId, ChatModel<UserModel, MessageModel>> | null;
+    const chats = user?.chats.sort(
+      (a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime(),
+    );
+    return res.status(200).json(chats);
+  } catch (err) {
+    return next(err);
+  }
+});
 
-const updateChatLastMessage = (id: string, messageId: string) =>
-  db.Chat.findOneAndUpdate({ id }, { $set: { lastMessage: messageId } }, { new: true });
-
-export const socketController = (socket: Socket, io: Server) => {
-  console.log('new connection');
-
-  socket.on('disconnect', () => console.log('user disconnected'));
-
-  socket.on('message', async (data: Data) => {
-    try {
-      if (!data.content || !data.from || !data.to) {
-        throw new Error('Invalid request!');
-      }
-      if (data.chatId) {
-        const message = await db.Message.create(data);
-        const chat = await updateChatLastMessage(data.chatId, message.id);
-        return io.emit('message', { message, chat });
-      }
-      const chat = await db.Chat.create({
-        users: [data.from, data.to],
-      });
-      const message = await db.Message.create({
-        ...data,
-        chatId: chat.id,
-      });
-      const [updatedChat] = await Promise.all([
-        updateChatLastMessage(chat.id, message.id),
-        updateUserWithChats(data.from, chat.id),
-        updateUserWithChats(data.to, chat.id),
-      ]);
-      return io.emit('message', { message, updatedChat });
-    } catch (err) {
-      console.log(err);
-      return;
-    }
-  });
-};
+// GET messages from specific chatId
+router.get('/:chatId', async (req, res, next) => {
+  try {
+    const messages = await db.Message.find({ chatId: req.params.chatId })
+      .sort({ createdAt: 'asc' })
+      .populate({ path: 'from', select: 'id orgType orgName' })
+      .populate({ path: 'to', select: 'id orgType orgName' });
+    return res.status(200).json(messages);
+  } catch (err) {
+    return next(err);
+  }
+});
 
 export default router;

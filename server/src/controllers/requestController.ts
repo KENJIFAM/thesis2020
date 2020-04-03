@@ -62,7 +62,7 @@ router.patch('/:id', async (req: AuthRequest, res, next) => {
       return next({ status: 401, message: 'Not authorized to edit this request!' });
     }
     const editedRequest = await db.Request.findOneAndUpdate(
-      { id: request?.id },
+      { _id: request?.id },
       { $set: req.body },
       { new: true },
     ).populate('user', 'id orgType orgName');
