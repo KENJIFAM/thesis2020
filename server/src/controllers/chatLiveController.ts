@@ -26,7 +26,9 @@ export const updateUserWithChats = async (id: string, chatId: string) => {
 };
 
 export const updateChatLastMessage = (_id: string, messageId: string) =>
-  db.Chat.findOneAndUpdate({ _id }, { $set: { lastMessage: messageId } }, { new: true });
+  db.Chat.findOneAndUpdate({ _id }, { $set: { lastMessage: messageId } }, { new: true })
+    .populate('users', 'id orgType orgName')
+    .populate('lastMessage');
 
 export const socketController = (socket: Socket, io: Server) => {
   console.log('new connection');
@@ -55,7 +57,7 @@ export const socketController = (socket: Socket, io: Server) => {
         updateUserWithChats(data.from, chat.id),
         updateUserWithChats(data.to, chat.id),
       ]);
-      return io.emit('message', { message, updatedChat });
+      return io.emit('message', { message, chat: updatedChat });
     } catch (err) {
       console.log(err);
       return;
