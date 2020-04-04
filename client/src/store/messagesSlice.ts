@@ -58,4 +58,22 @@ export const fetchMessages = (chatId: string): AppThunk => async (dispatch, getS
   }
 };
 
+export const updateMessage = (message: Message): AppThunk => async (dispatch, getState) => {
+  try {
+    const messagesRecord = getState().messages.data;
+    const foundMessage = messagesRecord[message.chatId].find((m) => m.id === message.id);
+    if (foundMessage) {
+      return;
+    }
+    const updatedMessagesWithChatId: Message[] = [...messagesRecord[message.chatId], message];
+    const updatedMessagesRecord = {
+      ...messagesRecord,
+      [message.chatId]: updatedMessagesWithChatId,
+    };
+    dispatch(updateMessagesSuccess(updatedMessagesRecord));
+  } catch (e) {
+    dispatch(updateMessagesFail(e.response?.data?.error ?? e.message ?? ''));
+  }
+};
+
 export default messagesSlice.reducer;
