@@ -3,7 +3,7 @@ import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import { Box, List } from '@material-ui/core';
 import classNames from 'classnames';
-import { fetchChats, updateActiveChatId } from '../../store/chatsSlice';
+import { fetchChats, updateActiveChat } from '../../store/chatsSlice';
 import { RootState } from '../../store/rootReducer';
 import ChatItem from './ChatItem';
 import { Chat } from '../../services/types';
@@ -20,7 +20,7 @@ const ChatList = () => {
     (state: RootState) => state.auth,
     shallowEqual,
   );
-  const { data: chats, isLoading: chatsLoading, activeChatId } = useSelector(
+  const { data: chats, isLoading: chatsLoading, activeChat } = useSelector(
     (state: RootState) => state.chats,
     shallowEqual,
   );
@@ -33,10 +33,10 @@ const ChatList = () => {
   }, [isLoggedIn, dispatch]);
 
   useEffect(() => {
-    if (chatsToRender.length && !activeChatId) {
-      dispatch(updateActiveChatId(chatsToRender[0][1].id));
+    if (chatsToRender.length && !activeChat) {
+      dispatch(updateActiveChat(chatsToRender[0][1]));
     }
-  }, [chatsToRender, dispatch, activeChatId]);
+  }, [chatsToRender, dispatch, activeChat]);
 
   const renderSpinner = () => (
     <Box className={classNames('', classes.spinner)}>

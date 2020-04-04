@@ -5,14 +5,14 @@ import type { AppThunk } from '.';
 import { Chat, ChatResponse } from '../services/types';
 
 export interface ChatsState {
-  activeChatId: Chat['id'] | null;
+  activeChat: Chat | null;
   data: Record<Chat['to']['id'], Chat>;
   isLoading: boolean;
   error: string | null;
 }
 
 const initialState: ChatsState = {
-  activeChatId: null,
+  activeChat: null,
   data: {},
   isLoading: false,
   error: null,
@@ -37,9 +37,9 @@ const chatsSlice = createSlice({
       error: action.payload,
       isLoading: false,
     }),
-    updateActiveChatId: (state: ChatsState, action: PayloadAction<Chat['id'] | null>) => ({
+    updateActiveChat: (state: ChatsState, action: PayloadAction<Chat | null>) => ({
       ...state,
-      activeChatId: action.payload,
+      activeChat: action.payload,
     }),
   },
 });
@@ -48,8 +48,17 @@ export const {
   updateChatsStart,
   updateChatsSuccess,
   updateChatsFail,
-  updateActiveChatId,
+  updateActiveChat,
 } = chatsSlice.actions;
+
+export const getChatFromChatResponse = (chatResponse: ChatResponse, userId: string): Chat => {
+  const [to] = chatResponse.users.filter((user) => user.id !== userId);
+  return {
+    id: chatResponse.id,
+    to,
+    lastMessage: chatResponse.lastMessage,
+  };
+};
 
 export const fetchChats = (): AppThunk => async (dispatch, getState) => {
   try {
@@ -60,6 +69,26 @@ export const fetchChats = (): AppThunk => async (dispatch, getState) => {
       record[to.id] = { id, to, lastMessage };
       return record;
     }, {} as Record<Chat['to']['id'], Chat>);
+    dispatch(updateChatsSuccess(chatsRecord));
+  } catch (e) {
+    dispatch(updateChatsFail(e.response?.data?.error ?? e.message ?? ''));
+  }
+};
+
+export const updateChatFromChatResponse = (chatResponse: ChatResponse): AppThunk => async (
+  dispatch,
+  getState,
+) => {
+  try {
+    const userId = getState().auth.user?.id;
+    if (!userId) {
+      throw new Error('Please login first!');
+    }
+    const chat = getChatFromChatResponse(chatResponse, userId);
+    const chatsRecord = {
+      ...getState().chats.data,
+      [chat.to.id]: chat,
+    };
     dispatch(updateChatsSuccess(chatsRecord));
   } catch (e) {
     dispatch(updateChatsFail(e.response?.data?.error ?? e.message ?? ''));

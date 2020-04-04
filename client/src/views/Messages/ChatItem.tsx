@@ -6,7 +6,7 @@ import ImagePlaceHolder from '../../components/ImagePlaceholder';
 import { Chat } from '../../services/types';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import { RootState } from '../../store/rootReducer';
-import { updateActiveChatId } from '../../store/chatsSlice';
+import { updateActiveChat } from '../../store/chatsSlice';
 
 moment.updateLocale('en', {
   relativeTime: {
@@ -35,7 +35,7 @@ const ChatItem = ({ chat }: Props) => {
   const { to, lastMessage, id } = chat;
   const classes = useStyles();
   const dispatch = useDispatch();
-  const activeChatId = useSelector((state: RootState) => state.chats.activeChatId, shallowEqual);
+  const activeChat = useSelector((state: RootState) => state.chats.activeChat, shallowEqual);
 
   const secondaryText = (
     <span className={classes.flexParent}>
@@ -48,8 +48,8 @@ const ChatItem = ({ chat }: Props) => {
   return (
     <ListItem
       button
-      selected={activeChatId === id}
-      onClick={() => dispatch(updateActiveChatId(id))}
+      selected={activeChat?.id === id}
+      onClick={() => dispatch(updateActiveChat(chat))}
     >
       <ListItemAvatar>
         <Avatar>

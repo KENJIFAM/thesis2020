@@ -2,17 +2,16 @@ import React, { useEffect } from 'react';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import { Box, List } from '@material-ui/core';
-import classNames from 'classnames';
 import { fetchMessages } from '../../store/messagesSlice';
 import { RootState } from '../../store/rootReducer';
 import Spinner from '../../components/Spinner';
 import MessageItem from './MessageItem';
 import MessageInput from './MessageInput';
 
-const ChatList = () => {
+const ChatArea = () => {
   const classes = useStyles();
   const dispatch = useDispatch();
-  const { isLoggedIn, isLoading: authLoading } = useSelector(
+  const { isLoggedIn, isLoading: authLoading, user } = useSelector(
     (state: RootState) => state.auth,
     shallowEqual,
   );
@@ -20,7 +19,8 @@ const ChatList = () => {
     (state: RootState) => state.messages,
     shallowEqual,
   );
-  const activeChatId = useSelector((state: RootState) => state.chats.activeChatId, shallowEqual);
+  const activeChat = useSelector((state: RootState) => state.chats.activeChat, shallowEqual);
+  const activeChatId = activeChat?.id;
   const messagesToRender = (activeChatId && messages[activeChatId]) || [];
 
   useEffect(() => {
@@ -34,16 +34,20 @@ const ChatList = () => {
 
   if (authLoading || messagesLoading) {
     return (
-      <Box className={classNames('', classes.spinner)}>
+      <Box className={classes.spinner}>
         <Spinner />
       </Box>
     );
   }
 
+  if (!activeChat || !user) {
+    return null;
+  }
+
   return (
     <Box className={classes.root}>
-      <List className={classes.chatList}>{renderMessageItems()}</List>
-      <MessageInput />
+      <List className={classes.messages}>{renderMessageItems()}</List>
+      <MessageInput activeChat={activeChat} currentUserId={user.id} />
     </Box>
   );
 };
@@ -58,7 +62,7 @@ const useStyles = makeStyles((theme: Theme) =>
       position: 'relative',
       overflow: 'hidden',
     },
-    chatList: {
+    messages: {
       width: '100%',
       height: 'calc(100% - 52px)',
       padding: 0,
@@ -74,4 +78,4 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 );
 
-export default React.memo(ChatList);
+export default React.memo(ChatArea);

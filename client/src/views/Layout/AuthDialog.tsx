@@ -201,7 +201,7 @@ const AuthDialog = ({ open, onClose, isSignUp, setIsSignUp }: Props) => {
                 <TextField
                   label="Organization name"
                   placeholder="Your organization name"
-                  name="text"
+                  name="orgName"
                   value={orgName.value}
                   onChange={(e) => handleChange(orgName, e)}
                   margin="normal"
