@@ -56,9 +56,23 @@ router.get('/:chatId', async (req, res, next) => {
   try {
     const messages = await db.Message.find({ chatId: req.params.chatId })
       .sort({ createdAt: 'asc' })
-      .populate({ path: 'from', select: 'id orgType orgName' })
-      .populate({ path: 'to', select: 'id orgType orgName' });
+      .populate('from', 'id orgType orgName')
+      .populate('to', 'id orgType orgName');
     return res.status(200).json(messages);
+  } catch (err) {
+    return next(err);
+  }
+});
+
+// DELETE ALL => test purpose
+router.delete('/', async (req, res, next) => {
+  try {
+    await Promise.all([
+      db.Chat.deleteMany({}),
+      db.Message.deleteMany({}),
+      db.User.updateMany({}, { $set: { chats: [] } }),
+    ]);
+    return res.status(200).json({ message: 'Deleted all chats and messages' });
   } catch (err) {
     return next(err);
   }
