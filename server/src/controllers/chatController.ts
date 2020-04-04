@@ -1,6 +1,6 @@
 import express from 'express';
 import db, { UserModel, ChatModel, MessageModel } from '../models';
-import { updateChatLastMessage, updateUserWithChats } from './chatLiveController';
+import { updateChatLastMessage, updateUserWithChats, populateMessage } from './chatLiveController';
 import { AuthRequest } from '../middleware/auth';
 import { Types } from 'mongoose';
 
@@ -14,8 +14,11 @@ router.post('/', async (req, res, next) => {
     }
     if (req.body.chatId) {
       const message = await db.Message.create(req.body);
-      const chat = await updateChatLastMessage(req.body.chatId, message.id);
-      return res.status(200).json({ message, chat });
+      const [populatedMessage, updatedChat] = await Promise.all([
+        populateMessage(message),
+        updateChatLastMessage(req.body.chatId, message.id),
+      ]);
+      return res.status(200).json({ message: populatedMessage, chat: updatedChat });
     }
     const chat = await db.Chat.create({
       users: [req.body.from, req.body.to],
@@ -24,12 +27,13 @@ router.post('/', async (req, res, next) => {
       ...req.body,
       chatId: chat.id,
     });
-    const [updatedChat] = await Promise.all([
+    const [populatedMessage, updatedChat] = await Promise.all([
+      populateMessage(message),
       updateChatLastMessage(chat.id, message.id),
       updateUserWithChats(req.body.from, chat.id),
       updateUserWithChats(req.body.to, chat.id),
     ]);
-    return res.status(200).json({ message, chat: updatedChat });
+    return res.status(200).json({ message: populatedMessage, chat: updatedChat });
   } catch (err) {
     return next(err);
   }

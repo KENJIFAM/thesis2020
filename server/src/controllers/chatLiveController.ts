@@ -1,5 +1,5 @@
 import express from 'express';
-import db from '../models';
+import db, { MessageModel } from '../models';
 import type { Socket, Server } from 'socket.io';
 
 interface Data {
@@ -30,6 +30,12 @@ export const updateChatLastMessage = (_id: string, messageId: string) =>
     .populate('users', 'id orgType orgName')
     .populate('lastMessage');
 
+export const populateMessage = (message: MessageModel) =>
+  message
+    .populate('from', 'id orgType orgName')
+    .populate('to', 'id orgType orgName')
+    .execPopulate();
+
 export const socketController = (socket: Socket, io: Server) => {
   console.log('new connection');
 
@@ -42,8 +48,11 @@ export const socketController = (socket: Socket, io: Server) => {
       }
       if (data.chatId) {
         const message = await db.Message.create(data);
-        const chat = await updateChatLastMessage(data.chatId, message.id);
-        return io.emit('message', { message, chat });
+        const [populatedMessage, updatedChat] = await Promise.all([
+          populateMessage(message),
+          updateChatLastMessage(data.chatId, message.id),
+        ]);
+        return io.emit('message', { message: populatedMessage, chat: updatedChat });
       }
       const chat = await db.Chat.create({
         users: [data.from, data.to],
@@ -52,12 +61,13 @@ export const socketController = (socket: Socket, io: Server) => {
         ...data,
         chatId: chat.id,
       });
-      const [updatedChat] = await Promise.all([
+      const [populatedMessage, updatedChat] = await Promise.all([
+        populateMessage(message),
         updateChatLastMessage(chat.id, message.id),
         updateUserWithChats(data.from, chat.id),
         updateUserWithChats(data.to, chat.id),
       ]);
-      return io.emit('message', { message, chat: updatedChat });
+      return io.emit('message', { message: populatedMessage, chat: updatedChat });
     } catch (err) {
       console.log(err);
       return;
