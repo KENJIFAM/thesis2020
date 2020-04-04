@@ -5,7 +5,7 @@ import type { AppThunk } from '.';
 import type { Request, RequestFormData } from '../services/types';
 
 export interface RequestsState {
-  data: Record<string, Request>;
+  data: Record<Request['id'], Request>;
   isLoading: boolean;
   error: string | null;
 }
@@ -23,7 +23,7 @@ const requestsSlice = createSlice({
     updateRequestsStart: (state: RequestsState) => ({ ...state, error: null, isLoading: true }),
     updateRequestsSuccess: (
       state,
-      action: PayloadAction<Record<string, Request>>,
+      action: PayloadAction<Record<Request['id'], Request>>,
     ): RequestsState => ({
       ...state,
       isLoading: false,
@@ -51,7 +51,7 @@ export const fetchRequests = (): AppThunk => async (dispatch) => {
     const requestsRecord = requests.data.reduce((record, request) => {
       record[request.id] = request;
       return record;
-    }, {} as Record<string, Request>);
+    }, {} as Record<Request['id'], Request>);
     dispatch(updateRequestsSuccess(requestsRecord));
   } catch (e) {
     dispatch(updateRequestsFail(e.response.data.error));
@@ -64,7 +64,7 @@ export const fetchRequest = (requestId: string): AppThunk => async (dispatch, ge
     const request: AxiosResponse<Request> = await axios.get(`/requests/${requestId}`);
     const requestsRecord = {
       ...getState().requests.data,
-      [request.data.id]: request.data,
+      [requestId]: request.data,
     };
     dispatch(updateRequestsSuccess(requestsRecord));
   } catch (e) {

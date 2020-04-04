@@ -75,3 +75,35 @@ export interface RequestForm {
 }
 
 export type RequestFormData = RequestBase;
+
+// Chat
+
+export interface ChatResponse {
+  id: string;
+  users: [BaseUser, BaseUser];
+  lastMessage: Message;
+}
+
+export interface Chat {
+  id: string;
+  to: BaseUser;
+  lastMessage: Message;
+}
+
+// Message
+
+export interface Message {
+  id: string;
+  content: string;
+  from: BaseUser;
+  to: BaseUser;
+  chatId: string;
+  createdAt: string;
+}
+
+export interface MessageFormData {
+  content: string;
+  from: string;
+  to: string;
+  chatId?: string;
+}
