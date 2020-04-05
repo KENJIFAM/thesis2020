@@ -1,7 +1,11 @@
 FROM node:13-alpine
 WORKDIR /app
 COPY package.json yarn.lock ./
-RUN yarn install
+RUN apk add --no-cache make gcc g++ python && \
+  yarn install && \
+  yarn remove bcrypt && \
+  yarn add bcrypt && \
+  apk del make gcc g++ python
 COPY ./ ./
 RUN yarn run build
 CMD ["yarn", "start"]
