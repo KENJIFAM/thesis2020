@@ -4,6 +4,7 @@ import compression from 'compression';
 import helmet from 'helmet';
 import http from 'http';
 import socketIo from 'socket.io';
+import publicController from './controllers/publicController';
 import authController from './controllers/authController';
 import userController from './controllers/userController';
 import requestController from './controllers/requestController';
@@ -20,6 +21,7 @@ app.use(compression());
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
+app.use('/public', publicController);
 app.use('/auth', authController);
 app.use('/profile/', auth, userController);
 app.use('/requests/', auth, requestController);
