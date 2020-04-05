@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { makeStyles, Theme, createStyles } from '@material-ui/core/styles';
 import { Typography, MobileStepper, Button, Box } from '@material-ui/core';
 import { KeyboardArrowLeft, KeyboardArrowRight } from '@material-ui/icons';
+import axios from '../../apis';
 
 export interface Step {
   title: string;
@@ -10,14 +11,21 @@ export interface Step {
 }
 
 interface Props {
-  data: Step[];
   autoInterval?: number;
 }
 
-const Carousel = ({ data, autoInterval }: Props) => {
+const Carousel = ({ autoInterval }: Props) => {
   const classes = useStyles();
+  const [feeds, setFeeds] = useState<Step[]>([]);
   const [activeStep, setActiveStep] = useState(0);
-  const maxSteps = data.length;
+  const maxSteps = feeds.length;
+
+  useEffect(() => {
+    (async () => {
+      const feeds = await axios.get('/public/feeds');
+      setFeeds(feeds.data);
+    })();
+  }, []);
 
   useEffect(() => {
     if (autoInterval) {
@@ -29,11 +37,11 @@ const Carousel = ({ data, autoInterval }: Props) => {
   }, [autoInterval, maxSteps]);
 
   const handleNext = () => {
-    setActiveStep((prevActiveStep) => prevActiveStep + 1);
+    setActiveStep((prevActiveStep) => (prevActiveStep + 1) % maxSteps);
   };
 
   const handleBack = () => {
-    setActiveStep((prevActiveStep) => prevActiveStep - 1);
+    setActiveStep((prevActiveStep) => (prevActiveStep - 1) % maxSteps);
   };
 
   return (
@@ -42,7 +50,7 @@ const Carousel = ({ data, autoInterval }: Props) => {
         <Box className={classes.imgInnerContainer}>
           <Box
             className={classes.img}
-            style={{ backgroundImage: `url(${data[activeStep].imgPath})` }}
+            style={{ backgroundImage: `url(${feeds[activeStep]?.imgPath})` }}
           />
         </Box>
       </Box>
@@ -61,7 +69,7 @@ const Carousel = ({ data, autoInterval }: Props) => {
               size="small"
               variant="outlined"
               onClick={handleBack}
-              disabled={activeStep === 0}
+              // disabled={activeStep === 0}
             >
               <KeyboardArrowLeft />
             </Button>
@@ -71,7 +79,7 @@ const Carousel = ({ data, autoInterval }: Props) => {
               size="small"
               variant="outlined"
               onClick={handleNext}
-              disabled={activeStep === maxSteps - 1}
+              // disabled={activeStep === maxSteps - 1}
             >
               <KeyboardArrowRight />
             </Button>
@@ -79,10 +87,10 @@ const Carousel = ({ data, autoInterval }: Props) => {
         />
         <Box className={classes.textAreaContent}>
           <Typography variant="h5" className={classes.title}>
-            {data[activeStep].title}
+            {feeds[activeStep]?.title}
           </Typography>
           <Typography variant="body1" className={classes.description}>
-            {data[activeStep].description}
+            {feeds[activeStep]?.description}
           </Typography>
         </Box>
       </Box>
