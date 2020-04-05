@@ -1,21 +1,31 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { createStyles, makeStyles } from '@material-ui/core/styles';
 import { Typography, Box, Theme, Grid } from '@material-ui/core';
 import MediaCard from '../../components/MediaCard';
-import { supermarkets } from '../../services/mocks';
+import axios from '../../apis';
+
+interface Partner {
+  id: string;
+  name: string;
+  description: string;
+  containedImage?: boolean;
+}
 
 const Partners = () => {
+  const [partners, setPartners] = useState<Partner[]>([]);
   const classes = useStyles();
 
+  useEffect(() => {
+    (async () => {
+      const partners = await axios.get('/public/partners');
+      setPartners(partners.data);
+    })();
+  }, []);
+
   const renderPartners = () =>
-    supermarkets.map((sm) => (
+    partners.map((sm) => (
       <Grid item key={sm.id} xs={12} sm={6} md={4}>
-        <MediaCard
-          name={sm.name}
-          description={sm.description}
-          image={sm.image}
-          containedImage={sm.containedImage}
-        />
+        <MediaCard name={sm.name} description={sm.description} containedImage={sm.containedImage} />
       </Grid>
     ));
 

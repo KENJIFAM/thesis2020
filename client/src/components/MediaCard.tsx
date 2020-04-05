@@ -1,30 +1,22 @@
 import React from 'react';
 import { makeStyles, createStyles } from '@material-ui/core/styles';
-import {
-  Card,
-  CardActionArea,
-  CardMedia,
-  CardContent,
-  Typography,
-  Theme,
-  Box,
-} from '@material-ui/core';
+import { Card, CardActionArea, CardContent, Typography, Theme, Box } from '@material-ui/core';
+import ImagePlaceHolder from './ImagePlaceholder';
 
 interface Props {
   name: string;
   description: string;
-  image: string;
   containedImage?: boolean;
 }
 
-const MediaCard = ({ name, description, image, containedImage = false }: Props) => {
+const MediaCard = ({ name, description, containedImage = false }: Props) => {
   const classes = useStyles(containedImage);
 
   return (
     <Card className={classes.root}>
       <CardActionArea className={classes.actionArea}>
         <Box className={classes.mediaContainer}>
-          <CardMedia className={classes.media} image={image} title={name} />
+          <ImagePlaceHolder title={name} className={classes.media} fontSize={30} />
         </Box>
         <CardContent>
           <Typography gutterBottom variant="h5">
@@ -65,6 +57,8 @@ const useStyles = makeStyles((theme: Theme) =>
       height: '100%',
       overflow: 'hidden',
       backgroundColor: theme.palette.common.black,
+      backgroundPosition: 'center',
+      backgroundRepeat: 'no-repeat',
       backgroundSize: (containedImage: boolean) => (containedImage ? 'contain' : 'cover'),
     },
   }),

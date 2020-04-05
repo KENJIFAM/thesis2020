@@ -1,19 +1,26 @@
 import React from 'react';
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
+import classNames from 'classnames';
 
 interface Props {
   title?: string;
+  className?: string;
+  fontSize?: number;
 }
 
-const ImagePlaceHolder = (props: Props) => <div className={useStyles(props).image} />;
+const ImagePlaceHolder = (props: Props) => (
+  <div className={classNames(useStyles(props).image, props.className)} />
+);
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     image: {
       height: '100%',
       width: '100%',
-      backgroundImage: ({ title = '' }: Props) =>
-        `url(https://avatars.dicebear.com/v2/initials/${encodeURIComponent(title)}.svg)`,
+      backgroundImage: ({ title = '', fontSize = 50 }: Props) =>
+        `url(https://avatars.dicebear.com/v2/initials/${encodeURIComponent(
+          title,
+        )}.svg?options[fontSize]=${fontSize})`,
     },
   }),
 );
