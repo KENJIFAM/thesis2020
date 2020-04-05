@@ -2,7 +2,6 @@ import React, { useEffect } from 'react';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import { Box, List } from '@material-ui/core';
-import classNames from 'classnames';
 import { fetchChats, updateActiveChat } from '../../store/chatsSlice';
 import { RootState } from '../../store/rootReducer';
 import ChatItem from './ChatItem';
@@ -38,22 +37,20 @@ const ChatList = () => {
     }
   }, [chatsToRender, dispatch, activeChat]);
 
-  const renderSpinner = () => (
-    <Box className={classNames('', classes.spinner)}>
-      <Spinner />
-    </Box>
-  );
-
   const renderChatItems = () =>
     chatsToRender.map(([toId, chat]) => <ChatItem key={toId} chat={chat} />);
 
+  if (authLoading || chatsLoading) {
+    return (
+      <Box className={classes.spinner}>
+        <Spinner />
+      </Box>
+    );
+  }
+
   return (
     <Box className={classes.root}>
-      {authLoading || chatsLoading ? (
-        renderSpinner()
-      ) : (
-        <List className={classes.chatList}>{renderChatItems()}</List>
-      )}
+      <List className={classes.chatList}>{renderChatItems()}</List>
     </Box>
   );
 };

@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import { Box, List } from '@material-ui/core';
@@ -29,8 +29,17 @@ const ChatArea = () => {
     }
   }, [isLoggedIn, activeChatId, dispatch]);
 
+  useEffect(() => {
+    scrollToBottom();
+  }, [messagesToRender]);
+
   const renderMessageItems = () =>
     messagesToRender.map((message) => <MessageItem key={message.id} message={message} />);
+
+  const endMessageRef = useRef<null | HTMLDivElement>(null);
+
+  const scrollToBottom = () =>
+    endMessageRef.current?.scrollIntoView({ block: 'end', behavior: 'smooth' });
 
   if (authLoading || messagesLoading) {
     return (
@@ -46,7 +55,10 @@ const ChatArea = () => {
 
   return (
     <Box className={classes.root}>
-      <List className={classes.messages}>{renderMessageItems()}</List>
+      <List className={classes.messages}>
+        {renderMessageItems()}
+        <div ref={endMessageRef} />
+      </List>
       <MessageInput activeChat={activeChat} currentUserId={user.id} />
     </Box>
   );
