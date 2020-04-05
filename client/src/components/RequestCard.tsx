@@ -1,6 +1,6 @@
 import React from 'react';
 import { makeStyles, createStyles } from '@material-ui/core/styles';
-import { Card, CardContent, Typography, Theme, Box, IconButton } from '@material-ui/core';
+import { Card, CardContent, Typography, Theme, Box, IconButton, Avatar } from '@material-ui/core';
 import LocalGroceryStoreIcon from '@material-ui/icons/LocalGroceryStore';
 import EcoIcon from '@material-ui/icons/Eco';
 import RestaurantIcon from '@material-ui/icons/Restaurant';
@@ -9,6 +9,7 @@ import DeleteIcon from '@material-ui/icons/Delete';
 import EditIcon from '@material-ui/icons/Edit';
 import moment from 'moment';
 import { Request, User } from '../services/types';
+import ImagePlaceHolder from './ImagePlaceholder';
 
 interface Props {
   request: Request;
@@ -49,11 +50,16 @@ const RequestCard = ({ request, userId, deleteRequest }: Props) => {
       </Box>
       <CardContent className={classes.cardContent}>
         <Box className={classes.header}>
-          <Box>
-            <Typography variant="h6">{orgName}</Typography>
-            <Typography gutterBottom variant="caption" component="p">
-              {moment(createdAt).fromNow()}
-            </Typography>
+          <Box className={classes.userInfo}>
+            <Avatar>
+              <ImagePlaceHolder title={user.orgName} />
+            </Avatar>
+            <Box className={classes.userName}>
+              <Typography variant="body1">{orgName}</Typography>
+              <Typography variant="caption" component="p">
+                {moment(createdAt).fromNow()}
+              </Typography>
+            </Box>
           </Box>
           {renderButtons()}
         </Box>
@@ -99,6 +105,13 @@ const useStyles = makeStyles((theme: Theme) =>
     header: {
       display: 'flex',
       justifyContent: 'space-between',
+    },
+    userInfo: {
+      display: 'flex',
+      alignItems: 'center',
+    },
+    userName: {
+      paddingLeft: theme.spacing(1),
     },
     editButton: {
       '&:hover': {

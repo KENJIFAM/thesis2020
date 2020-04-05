@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { makeStyles, Theme, createStyles } from '@material-ui/core/styles';
 import { Typography, MobileStepper, Button, Box } from '@material-ui/core';
 import { KeyboardArrowLeft, KeyboardArrowRight } from '@material-ui/icons';
+import classNames from 'classnames';
 import axios from '../../apis';
 
 export interface Step {
@@ -44,15 +45,19 @@ const Carousel = ({ autoInterval }: Props) => {
     setActiveStep((prevActiveStep) => (prevActiveStep - 1) % maxSteps);
   };
 
+  const renderImages = () =>
+    feeds.map((feed, i) => (
+      <Box
+        key={i}
+        className={classNames(classes.img, i !== activeStep && classes.hiddenImage)}
+        style={{ backgroundImage: `url(${feed.imgPath})` }}
+      />
+    ));
+
   return (
     <Box className={classes.root}>
       <Box className={classes.imgContainer}>
-        <Box className={classes.imgInnerContainer}>
-          <Box
-            className={classes.img}
-            style={{ backgroundImage: `url(${feeds[activeStep]?.imgPath})` }}
-          />
-        </Box>
+        <Box className={classes.imgInnerContainer}>{renderImages()}</Box>
       </Box>
       <Box className={classes.textArea}>
         <MobileStepper
@@ -65,22 +70,12 @@ const Carousel = ({ autoInterval }: Props) => {
             dot: classes.stepperDot,
           }}
           backButton={
-            <Button
-              size="small"
-              variant="outlined"
-              onClick={handleBack}
-              // disabled={activeStep === 0}
-            >
+            <Button size="small" variant="outlined" onClick={handleBack}>
               <KeyboardArrowLeft />
             </Button>
           }
           nextButton={
-            <Button
-              size="small"
-              variant="outlined"
-              onClick={handleNext}
-              // disabled={activeStep === maxSteps - 1}
-            >
+            <Button size="small" variant="outlined" onClick={handleNext}>
               <KeyboardArrowRight />
             </Button>
           }
@@ -136,7 +131,6 @@ const useStyles = makeStyles((theme: Theme) =>
       width: '100%',
       height: '100%',
       overflow: 'hidden',
-      // borderRadius: '4px 0 0 4px',
     },
     img: {
       height: '100%',
@@ -146,7 +140,9 @@ const useStyles = makeStyles((theme: Theme) =>
       backgroundRepeat: 'no-repeat',
       backgroundPosition: 'center',
       transition: 'opacity 0.3s linear',
-      // borderRadius: '4px 0 0 4px',
+    },
+    hiddenImage: {
+      display: 'none',
     },
     textArea: {
       position: 'absolute',
