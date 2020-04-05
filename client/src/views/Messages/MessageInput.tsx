@@ -33,18 +33,21 @@ const MessageInput = ({ activeChat, currentUserId }: Props) => {
 
   useEffect(() => {
     socket.on('message', ({ message, chat }: ChatData) => {
-      console.log(message, chat);
-
       dispatch(updateActiveChat(getChatFromChatResponse(chat, currentUserId)));
       dispatch(updateChatFromChatResponse(chat));
       dispatch(updateMessage(message));
     });
-  }, []);
+    return () => {
+      socket.removeAllListeners();
+      socket.close();
+    };
+  }, [socket, dispatch, currentUserId]);
 
   const onSubmit = (
     e: React.FormEvent<HTMLFormElement> | React.MouseEvent<HTMLButtonElement, MouseEvent>,
   ) => {
     e.preventDefault();
+    e.stopPropagation();
     if (inputMessage.length) {
       socket.emit('message', {
         content: inputMessage,
