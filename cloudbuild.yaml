@@ -20,24 +20,6 @@ steps:
   - name: "gcr.io/cloud-builders/gke-deploy"
     args:
       - run
-      - --filename=./k8s/server-deployment-service.yaml
-      - --image=gcr.io/$PROJECT_ID/server:$SHORT_SHA
-      - --location=${_CLOUDSDK_COMPUTE_ZONE}
-      - --cluster=${_CLOUDSDK_CONTAINER_CLUSTER}
-    id: "deploy-server"
-    waitFor: ["push-server", "deploy-ingress"]
-  - name: "gcr.io/cloud-builders/gke-deploy"
-    args:
-      - run
-      - --filename=./k8s/client-deployment-service.yaml
-      - --image=gcr.io/$PROJECT_ID/client:$SHORT_SHA
-      - --location=${_CLOUDSDK_COMPUTE_ZONE}
-      - --cluster=${_CLOUDSDK_CONTAINER_CLUSTER}
-    id: "deploy-client"
-    waitFor: ["push-client", "deploy-server"]
-  - name: "gcr.io/cloud-builders/gke-deploy"
-    args:
-      - run
       - --filename=./k8s/mongo-deployment-service.yaml
       - --image=mongo
       - --location=${_CLOUDSDK_COMPUTE_ZONE}
@@ -60,4 +42,22 @@ steps:
       - --cluster=${_CLOUDSDK_CONTAINER_CLUSTER}
     id: "deploy-ingress"
     waitFor: ["deploy-pvc"]
+  - name: "gcr.io/cloud-builders/gke-deploy"
+    args:
+      - run
+      - --filename=./k8s/server-deployment-service.yaml
+      - --image=gcr.io/$PROJECT_ID/server:$SHORT_SHA
+      - --location=${_CLOUDSDK_COMPUTE_ZONE}
+      - --cluster=${_CLOUDSDK_CONTAINER_CLUSTER}
+    id: "deploy-server"
+    waitFor: ["push-server", "deploy-ingress"]
+  - name: "gcr.io/cloud-builders/gke-deploy"
+    args:
+      - run
+      - --filename=./k8s/client-deployment-service.yaml
+      - --image=gcr.io/$PROJECT_ID/client:$SHORT_SHA
+      - --location=${_CLOUDSDK_COMPUTE_ZONE}
+      - --cluster=${_CLOUDSDK_CONTAINER_CLUSTER}
+    id: "deploy-client"
+    waitFor: ["push-client", "deploy-server"]
 timeout: 1800s
