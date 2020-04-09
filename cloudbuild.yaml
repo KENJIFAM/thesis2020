@@ -6,6 +6,7 @@ steps:
   - name: "gcr.io/cloud-builders/docker"
     args: ["build", "-t", "gcr.io/$PROJECT_ID/client:$SHORT_SHA", "./client"]
     id: "build-client"
+    waitFor: ["-"]
   # push container image
   - name: "gcr.io/cloud-builders/docker"
     args: ["push", "gcr.io/$PROJECT_ID/server:$SHORT_SHA"]
@@ -24,7 +25,7 @@ steps:
       - --location=${_CLOUDSDK_COMPUTE_ZONE}
       - --cluster=${_CLOUDSDK_CONTAINER_CLUSTER}
     id: "deploy-server"
-    waitFor: ["push-server"]
+    waitFor: ["push-server", "deploy-ingress"]
   - name: "gcr.io/cloud-builders/gke-deploy"
     args:
       - run
@@ -33,7 +34,7 @@ steps:
       - --location=${_CLOUDSDK_COMPUTE_ZONE}
       - --cluster=${_CLOUDSDK_CONTAINER_CLUSTER}
     id: "deploy-client"
-    waitFor: ["push-client"]
+    waitFor: ["push-client", "deploy-server"]
   - name: "gcr.io/cloud-builders/gke-deploy"
     args:
       - run
@@ -41,6 +42,7 @@ steps:
       - --image=mongo
       - --location=${_CLOUDSDK_COMPUTE_ZONE}
       - --cluster=${_CLOUDSDK_CONTAINER_CLUSTER}
+    id: "deploy-mongo"
     waitFor: ["-"]
   - name: "gcr.io/cloud-builders/gke-deploy"
     args:
@@ -48,12 +50,14 @@ steps:
       - --filename=./k8s/database-persistent-volume-claim.yaml
       - --location=${_CLOUDSDK_COMPUTE_ZONE}
       - --cluster=${_CLOUDSDK_CONTAINER_CLUSTER}
-    waitFor: ["-"]
+    id: "deploy-pvc"
+    waitFor: ["deploy-mongo"]
   - name: "gcr.io/cloud-builders/gke-deploy"
     args:
       - run
       - --filename=./k8s/ingress-service.yaml
       - --location=${_CLOUDSDK_COMPUTE_ZONE}
       - --cluster=${_CLOUDSDK_CONTAINER_CLUSTER}
-    waitFor: ["-"]
+    id: "deploy-ingress"
+    waitFor: ["deploy-pvc"]
 timeout: 1800s
