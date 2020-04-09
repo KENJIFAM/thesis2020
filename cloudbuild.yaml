@@ -2,13 +2,23 @@ steps:
   # build the container images
   - name: "gcr.io/cloud-builders/docker"
     args: ["build", "-t", "gcr.io/$PROJECT_ID/server:$SHORT_SHA", "./server"]
+    id: "build-server"
+
   - name: "gcr.io/cloud-builders/docker"
     args: ["build", "-t", "gcr.io/$PROJECT_ID/client:$SHORT_SHA", "./client"]
+    id: "build-client"
+
   # push container image
   - name: "gcr.io/cloud-builders/docker"
     args: ["push", "gcr.io/$PROJECT_ID/server:$SHORT_SHA"]
+    id: "push-server"
+    waitFor: "build-server"
+
   - name: "gcr.io/cloud-builders/docker"
     args: ["push", "gcr.io/$PROJECT_ID/client:$SHORT_SHA"]
+    id: "push-client"
+    waitFor: "build-client"
+
   # deploy container image to GKE
   - name: "gcr.io/cloud-builders/gke-deploy"
     args:
@@ -17,6 +27,9 @@ steps:
       - --image=gcr.io/$PROJECT_ID/server:$SHORT_SHA
       - --location=${_CLOUDSDK_COMPUTE_ZONE}
       - --cluster=${_CLOUDSDK_CONTAINER_CLUSTER}
+    id: "deploy-server"
+    waitFor: "push-server"
+
   - name: "gcr.io/cloud-builders/gke-deploy"
     args:
       - run
@@ -24,6 +37,9 @@ steps:
       - --image=gcr.io/$PROJECT_ID/client:$SHORT_SHA
       - --location=${_CLOUDSDK_COMPUTE_ZONE}
       - --cluster=${_CLOUDSDK_CONTAINER_CLUSTER}
+    id: "deploy-client"
+    waitFor: "push-client"
+
   - name: "gcr.io/cloud-builders/gke-deploy"
     args:
       - run
@@ -31,15 +47,22 @@ steps:
       - --image=mongo
       - --location=${_CLOUDSDK_COMPUTE_ZONE}
       - --cluster=${_CLOUDSDK_CONTAINER_CLUSTER}
+    waitFor: ["-"]
+
   - name: "gcr.io/cloud-builders/gke-deploy"
     args:
       - run
       - --filename=./k8s/database-persistent-volume-claim.yaml
       - --location=${_CLOUDSDK_COMPUTE_ZONE}
       - --cluster=${_CLOUDSDK_CONTAINER_CLUSTER}
+    waitFor: ["-"]
+
   - name: "gcr.io/cloud-builders/gke-deploy"
     args:
       - run
       - --filename=./k8s/ingress-service.yaml
       - --location=${_CLOUDSDK_COMPUTE_ZONE}
       - --cluster=${_CLOUDSDK_CONTAINER_CLUSTER}
+    waitFor: ["-"]
+
+timeout: 1800s
