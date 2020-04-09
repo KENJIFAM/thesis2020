@@ -10,11 +10,11 @@ steps:
   - name: "gcr.io/cloud-builders/docker"
     args: ["push", "gcr.io/$PROJECT_ID/server:$SHORT_SHA"]
     id: "push-server"
-    waitFor: "build-server"
+    waitFor: ["build-server"]
   - name: "gcr.io/cloud-builders/docker"
     args: ["push", "gcr.io/$PROJECT_ID/client:$SHORT_SHA"]
     id: "push-client"
-    waitFor: "build-client"
+    waitFor: ["build-client"]
   # deploy container image to GKE
   - name: "gcr.io/cloud-builders/gke-deploy"
     args:
@@ -24,7 +24,7 @@ steps:
       - --location=${_CLOUDSDK_COMPUTE_ZONE}
       - --cluster=${_CLOUDSDK_CONTAINER_CLUSTER}
     id: "deploy-server"
-    waitFor: "push-server"
+    waitFor: ["push-server"]
   - name: "gcr.io/cloud-builders/gke-deploy"
     args:
       - run
@@ -33,7 +33,7 @@ steps:
       - --location=${_CLOUDSDK_COMPUTE_ZONE}
       - --cluster=${_CLOUDSDK_CONTAINER_CLUSTER}
     id: "deploy-client"
-    waitFor: "push-client"
+    waitFor: ["push-client"]
   - name: "gcr.io/cloud-builders/gke-deploy"
     args:
       - run
