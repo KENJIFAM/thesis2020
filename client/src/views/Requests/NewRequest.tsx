@@ -57,7 +57,10 @@ const NewRequest = () => {
 
   const handleCancel = () => history.replace('/requests');
 
-  const onSubmit = async () => {
+  const onSubmit = async (
+    e: React.FormEvent<HTMLFormElement> | React.MouseEvent<HTMLButtonElement, MouseEvent>,
+  ) => {
+    e.preventDefault();
     if (!validateForm({ message, place, startTime, endTime, foodList })) {
       return;
     }

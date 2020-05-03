@@ -109,7 +109,10 @@ const AuthDialog = ({ open, onClose, isSignUp, setIsSignUp }: Props) => {
   const getForm = (): AuthForm =>
     isSignUp ? { email, password, orgType, orgName } : { email, password };
 
-  const onSubmit = () => {
+  const onSubmit = (
+    e: React.FormEvent<HTMLFormElement> | React.MouseEvent<HTMLButtonElement, MouseEvent>,
+  ) => {
+    e.preventDefault();
     const form = getForm();
     if (!validateForm(form)) {
       return;
