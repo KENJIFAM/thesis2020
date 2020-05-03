@@ -9,7 +9,8 @@ import ChatItem from './ChatItem';
 import { Chat } from '../../services/types';
 import Spinner from '../../components/Spinner';
 
-const getChatLastTime = (chat: [string, Chat]) => new Date(chat[1].lastMessage.createdAt).getTime();
+const getChatLastTime = (chat: [string, Chat]) =>
+  new Date(chat[1].lastMessage?.createdAt ?? chat[1].createdAt).getTime();
 
 const sortChats = (a: [string, Chat], b: [string, Chat]) => getChatLastTime(b) - getChatLastTime(a);
 

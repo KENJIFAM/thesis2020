@@ -57,6 +57,7 @@ export const getChatFromChatResponse = (chatResponse: ChatResponse, userId: stri
     id: chatResponse.id,
     to,
     lastMessage: chatResponse.lastMessage,
+    createdAt: chatResponse.createdAt,
   };
 };
 
@@ -64,11 +65,31 @@ export const fetchChats = (): AppThunk => async (dispatch, getState) => {
   try {
     dispatch(updateChatsStart());
     const chats: AxiosResponse<ChatResponse[]> = await axios.get('/chats');
-    const chatsRecord = chats.data.reduce((record, { id, users, lastMessage }) => {
+    const chatsRecord = chats.data.reduce((record, { id, users, lastMessage, createdAt }) => {
       const [to] = users.filter((user) => user.id !== getState().auth.user?.id);
-      record[to.id] = { id, to, lastMessage };
+      record[to.id] = { id, to, lastMessage, createdAt };
       return record;
     }, {} as Record<Chat['to']['id'], Chat>);
+    dispatch(updateChatsSuccess(chatsRecord));
+  } catch (e) {
+    dispatch(updateChatsFail(e.response?.data?.error ?? e.message ?? ''));
+  }
+};
+
+export const createChat = (from: string, to: string): AppThunk => async (dispatch, getState) => {
+  try {
+    const userId = getState().auth.user?.id;
+    if (!userId) {
+      throw new Error('Please login first!');
+    }
+    dispatch(updateChatsStart());
+    const chatResponse: AxiosResponse<ChatResponse> = await axios.post('/chats', { from, to });
+    const chat = getChatFromChatResponse(chatResponse.data, userId);
+    const chatsRecord = {
+      ...getState().chats.data,
+      [to]: chat,
+    };
+    dispatch(updateActiveChat(chat));
     dispatch(updateChatsSuccess(chatsRecord));
   } catch (e) {
     dispatch(updateChatsFail(e.response?.data?.error ?? e.message ?? ''));

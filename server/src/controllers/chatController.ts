@@ -7,21 +7,23 @@ import { Types } from 'mongoose';
 const router = express.Router();
 
 // POST new message
-router.post('/', async (req, res, next) => {
+router.post('/messages', async (req, res, next) => {
   try {
-    if (!req.body.content || !req.body.from || !req.body.to) {
+    const { content, from, to, chatId, isNewChat } = req.body;
+    if (!content || !from || !to) {
       return next({ status: 400, message: 'Invalid request!' });
     }
-    if (req.body.chatId) {
+    if (chatId) {
       const message = await db.Message.create(req.body);
       const [populatedMessage, updatedChat] = await Promise.all([
         populateMessage(message),
-        updateChatLastMessage(req.body.chatId, message.id),
+        updateChatLastMessage(chatId, message.id),
+        isNewChat ? updateUserWithChats(to, chatId) : null,
       ]);
       return res.status(200).json({ message: populatedMessage, chat: updatedChat });
     }
     const chat = await db.Chat.create({
-      users: [req.body.from, req.body.to],
+      users: [from, to],
     });
     const message = await db.Message.create({
       ...req.body,
@@ -30,10 +32,26 @@ router.post('/', async (req, res, next) => {
     const [populatedMessage, updatedChat] = await Promise.all([
       populateMessage(message),
       updateChatLastMessage(chat.id, message.id),
-      updateUserWithChats(req.body.from, chat.id),
-      updateUserWithChats(req.body.to, chat.id),
+      updateUserWithChats(from, chat.id),
+      updateUserWithChats(to, chat.id),
     ]);
     return res.status(200).json({ message: populatedMessage, chat: updatedChat });
+  } catch (err) {
+    return next(err);
+  }
+});
+
+// POST new chat
+router.post('/', async (req, res, next) => {
+  try {
+    if (!req.body.from || !req.body.to) {
+      return next({ status: 400, message: 'Invalid request!' });
+    }
+    const chat = await db.Chat.create({
+      users: [req.body.from, req.body.to],
+    });
+    await updateUserWithChats(req.body.from, chat.id);
+    return res.status(200).json({ chat });
   } catch (err) {
     return next(err);
   }

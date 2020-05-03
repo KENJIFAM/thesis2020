@@ -57,6 +57,7 @@ const MessageInput = ({ activeChat, currentUserId }: Props) => {
         from: currentUserId,
         to: activeChat.to.id,
         chatId: activeChat.id,
+        isNewChat: !activeChat.lastMessage,
       });
       setInputMessage('');
     }

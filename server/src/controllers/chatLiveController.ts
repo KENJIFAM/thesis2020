@@ -7,6 +7,7 @@ interface Data {
   from: string;
   to: string;
   chatId?: string;
+  isNewChat: boolean;
 }
 
 const router = express.Router();
@@ -51,6 +52,7 @@ export const socketController = (socket: Socket, io: Server) => {
         const [populatedMessage, updatedChat] = await Promise.all([
           populateMessage(message),
           updateChatLastMessage(data.chatId, message.id),
+          data.isNewChat ? updateUserWithChats(data.to, data.chatId) : null,
         ]);
         return io.emit('message', { message: populatedMessage, chat: updatedChat });
       }

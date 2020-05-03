@@ -81,13 +81,15 @@ export type RequestFormData = RequestBase;
 export interface ChatResponse {
   id: string;
   users: [BaseUser, BaseUser];
-  lastMessage: Message;
+  lastMessage?: Message;
+  createdAt: string;
 }
 
 export interface Chat {
   id: string;
   to: BaseUser;
-  lastMessage: Message;
+  lastMessage?: Message;
+  createdAt: string;
 }
 
 // Message

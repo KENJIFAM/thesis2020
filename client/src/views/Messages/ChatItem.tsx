@@ -2,6 +2,7 @@ import React from 'react';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import { ListItem, ListItemAvatar, Avatar, ListItemText } from '@material-ui/core';
 import moment from 'moment';
+import classNames from 'classnames';
 import ImagePlaceHolder from '../../components/ImagePlaceholder';
 import { Chat } from '../../services/types';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
@@ -39,9 +40,13 @@ const ChatItem = ({ chat }: Props) => {
 
   const secondaryText = (
     <span className={classes.flexParent}>
-      <span className={classes.truncated}>{lastMessage.content}</span>
+      <span className={classNames(classes.truncated, !lastMessage && classes.newMessage)}>
+        {lastMessage?.content ?? 'Send first message'}
+      </span>
       <span className={classes.dot}>{' · '}</span>
-      <span className={classes.time}>{moment(lastMessage.createdAt).fromNow()}</span>
+      <span className={classNames(classes.time, !lastMessage && classes.newMessage)}>
+        {moment(lastMessage?.createdAt ?? chat.createdAt).fromNow()}
+      </span>
     </span>
   );
 
@@ -77,6 +82,9 @@ const useStyles = makeStyles((theme: Theme) =>
       whiteSpace: 'nowrap',
       overflow: 'hidden',
       textOverflow: 'ellipsis',
+    },
+    newMessage: {
+      fontStyle: 'oblique',
     },
     time: {
       whiteSpace: 'nowrap',

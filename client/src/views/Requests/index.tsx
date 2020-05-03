@@ -9,6 +9,8 @@ import { RootState } from '../../store/rootReducer';
 import RequestCard from '../../components/RequestCard';
 import { Request, User } from '../../services/types';
 import Spinner from '../../components/Spinner';
+import { createChat, updateActiveChat, fetchChats } from '../../store/chatsSlice';
+import { useHistory } from 'react-router-dom';
 
 const mapOrgTypeToReqType = (orgType: User['orgType'] = 'SUPERMARKET'): Request['reqType'] =>
   orgType === 'SUPERMARKET' ? 'need' : 'offer';
@@ -17,6 +19,7 @@ const Requests = () => {
   const [tab, setTab] = useState(0);
   const classes = useStyles();
   const dispatch = useDispatch();
+  const history = useHistory();
   const { isLoggedIn, isLoading: authLoading, user } = useSelector(
     (state: RootState) => state.auth,
     shallowEqual,
@@ -25,6 +28,7 @@ const Requests = () => {
     (state: RootState) => state.requests,
     shallowEqual,
   );
+  const chats = useSelector((state: RootState) => state.chats.data, shallowEqual);
   const requestsToRender = Object.entries(requests).filter(([id, request]) =>
     tab === 0
       ? request.reqType === mapOrgTypeToReqType(user?.orgType)
@@ -34,11 +38,25 @@ const Requests = () => {
   useEffect(() => {
     if (isLoggedIn) {
       dispatch(fetchRequests());
+      dispatch(fetchChats());
     }
   }, [isLoggedIn, dispatch]);
 
   const handleDeleteRequest = (id: string) => {
     dispatch(deleteRequest(id));
+  };
+
+  const handleOpenChat = async (toId: string) => {
+    if (!chats[toId] && user) {
+      console.log('ko co');
+
+      await dispatch(createChat(user.id, toId));
+    } else {
+      console.log('co');
+
+      await dispatch(updateActiveChat(chats[toId]));
+    }
+    history.push('/messages');
   };
 
   const renderTabs = () => (
@@ -82,6 +100,7 @@ const Requests = () => {
           request={request}
           userId={user?.id}
           deleteRequest={handleDeleteRequest}
+          openChat={handleOpenChat}
         />
       ))}
     </Box>

@@ -7,6 +7,7 @@ import RestaurantIcon from '@material-ui/icons/Restaurant';
 import LocalCafeIcon from '@material-ui/icons/LocalCafe';
 import DeleteIcon from '@material-ui/icons/Delete';
 import EditIcon from '@material-ui/icons/Edit';
+import ChatIcon from '@material-ui/icons/Chat';
 import moment from 'moment';
 import { Request, User } from '../services/types';
 import ImagePlaceHolder from './ImagePlaceholder';
@@ -14,6 +15,7 @@ import ImagePlaceHolder from './ImagePlaceholder';
 interface Props {
   request: Request;
   deleteRequest: (id: string) => void;
+  openChat: (toId: string) => void;
   userId?: string;
 }
 
@@ -25,20 +27,26 @@ const mapOrgTypeToIcon = (orgType: User['orgType']) =>
     CAFETERIA: LocalCafeIcon,
   }[orgType]);
 
-const RequestCard = ({ request, userId, deleteRequest }: Props) => {
+const RequestCard = ({ request, userId, deleteRequest, openChat }: Props) => {
   const { id, message, startTime, endTime, foodList, user, createdAt } = request;
   const { orgName, orgType } = user;
   const classes = useStyles();
   const Icon = mapOrgTypeToIcon(orgType);
 
   const renderButtons = () =>
-    userId === user.id && (
+    userId === user.id ? (
       <Box>
         <IconButton className={classes.editButton}>
           <EditIcon />
         </IconButton>
         <IconButton className={classes.deleteButton} onClick={() => deleteRequest(id)}>
           <DeleteIcon />
+        </IconButton>
+      </Box>
+    ) : (
+      <Box>
+        <IconButton className={classes.chatButton} onClick={() => openChat(user.id)}>
+          <ChatIcon />
         </IconButton>
       </Box>
     );
@@ -121,6 +129,11 @@ const useStyles = makeStyles((theme: Theme) =>
     deleteButton: {
       '&:hover': {
         color: theme.palette.error.main,
+      },
+    },
+    chatButton: {
+      '&:hover': {
+        color: theme.palette.success.main,
       },
     },
     fieldContent: {
