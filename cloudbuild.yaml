@@ -47,6 +47,7 @@ steps:
       - run
       - --filename=./k8s/server-deployment-service.yaml
       - --image=gcr.io/$PROJECT_ID/server:$SHORT_SHA
+      - --output=./server
       - --location=${_CLOUDSDK_COMPUTE_ZONE}
       - --cluster=${_CLOUDSDK_CONTAINER_CLUSTER}
     id: "deploy-server"
@@ -56,6 +57,7 @@ steps:
       - run
       - --filename=./k8s/client-deployment-service.yaml
       - --image=gcr.io/$PROJECT_ID/client:$SHORT_SHA
+      - --output=./client
       - --location=${_CLOUDSDK_COMPUTE_ZONE}
       - --cluster=${_CLOUDSDK_CONTAINER_CLUSTER}
     # id: "deploy-client"
