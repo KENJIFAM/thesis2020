@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { useDispatch } from 'react-redux';
 import socketIoClient from 'socket.io-client';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
@@ -26,10 +26,13 @@ const MessageInput = ({ activeChat, currentUserId }: Props) => {
   const [inputMessage, setInputMessage] = useState('');
   const classes = useStyles();
   const dispatch = useDispatch();
-
-  const socket = socketIoClient('/', {
-    path: '/api/chatlive',
-  });
+  const socket = useMemo(
+    () =>
+      socketIoClient('/', {
+        path: '/api/chatlive',
+      }),
+    [],
+  );
 
   useEffect(() => {
     socket.on('message', ({ message, chat }: ChatData) => {

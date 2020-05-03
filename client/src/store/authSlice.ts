@@ -29,11 +29,7 @@ const authSlice = createSlice({
   name: 'auth',
   initialState,
   reducers: {
-    authStart: (state): AuthState => ({
-      ...state,
-      isLoading: true,
-      error: null,
-    }),
+    authStart: (state): AuthState => ({ ...state, isLoading: true, error: null }),
     authSuccess: (state, action: PayloadAction<User>): AuthState => ({
       ...state,
       isLoading: false,
@@ -46,7 +42,7 @@ const authSlice = createSlice({
       isLoading: false,
       error: action.payload,
     }),
-    authReset: (state): AuthState => initialState,
+    authReset: (): AuthState => initialState,
   },
 });
 
@@ -80,11 +76,10 @@ export const auth = (
   try {
     dispatch(authStart());
     const auth: AxiosResponse<AuthResponse> = await axios.post(`/auth/${type}`, authFormData);
-    const { token } = auth.data;
+    const { token, user } = auth.data;
     setTokenHeader(token);
-    const user: AxiosResponse<User> = await axios.get('/profile');
     saveToken(token);
-    dispatch(authSuccess(user.data));
+    dispatch(authSuccess(user));
   } catch (e) {
     dispatch(authFail(e.response.data.error));
   }
@@ -92,14 +87,10 @@ export const auth = (
 
 export const initialAuth = (): AppThunk => async (dispatch, getState) => {
   try {
-    if (getState().auth.isLoggedIn) {
-      return;
-    }
+    if (getState().auth.isLoggedIn) return;
     const token = getToken();
     const payload = getTokenPayload();
-    if (!token || !payload) {
-      return;
-    }
+    if (!token || !payload) return;
     setTokenHeader(token);
     const user: AxiosResponse<User> = await axios.get('/profile');
     dispatch(authSuccess(user.data));

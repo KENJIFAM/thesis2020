@@ -10,7 +10,7 @@ const Footer = () => {
       <Typography variant="body2" color="textSecondary" align="center">
         {'Copyright © '}
         <Link color="inherit" href="/">
-          Food Help
+          Food Supporter
         </Link>{' '}
         {new Date().getFullYear()}
       </Typography>

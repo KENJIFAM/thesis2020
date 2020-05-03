@@ -17,31 +17,31 @@ steps:
     id: "push-client"
     waitFor: ["build-client"]
   # deploy container image to GKE
-  - name: "gcr.io/cloud-builders/gke-deploy"
-    args:
-      - run
-      - --filename=./k8s/mongo-deployment-service.yaml
-      - --image=mongo
-      - --location=${_CLOUDSDK_COMPUTE_ZONE}
-      - --cluster=${_CLOUDSDK_CONTAINER_CLUSTER}
-    id: "deploy-mongo"
-    waitFor: ["-"]
-  - name: "gcr.io/cloud-builders/gke-deploy"
-    args:
-      - run
-      - --filename=./k8s/database-persistent-volume-claim.yaml
-      - --location=${_CLOUDSDK_COMPUTE_ZONE}
-      - --cluster=${_CLOUDSDK_CONTAINER_CLUSTER}
-    id: "deploy-pvc"
-    waitFor: ["deploy-mongo"]
-  - name: "gcr.io/cloud-builders/gke-deploy"
-    args:
-      - run
-      - --filename=./k8s/ingress-service.yaml
-      - --location=${_CLOUDSDK_COMPUTE_ZONE}
-      - --cluster=${_CLOUDSDK_CONTAINER_CLUSTER}
-    id: "deploy-ingress"
-    waitFor: ["deploy-pvc"]
+  # - name: "gcr.io/cloud-builders/gke-deploy"
+  #   args:
+  #     - run
+  #     - --filename=./k8s/mongo-deployment-service.yaml
+  #     - --image=mongo
+  #     - --location=${_CLOUDSDK_COMPUTE_ZONE}
+  #     - --cluster=${_CLOUDSDK_CONTAINER_CLUSTER}
+  #   id: "deploy-mongo"
+  #   waitFor: ["-"]
+  # - name: "gcr.io/cloud-builders/gke-deploy"
+  #   args:
+  #     - run
+  #     - --filename=./k8s/database-persistent-volume-claim.yaml
+  #     - --location=${_CLOUDSDK_COMPUTE_ZONE}
+  #     - --cluster=${_CLOUDSDK_CONTAINER_CLUSTER}
+  #   id: "deploy-pvc"
+  #   waitFor: ["deploy-mongo"]
+  # - name: "gcr.io/cloud-builders/gke-deploy"
+  #   args:
+  #     - run
+  #     - --filename=./k8s/ingress-service.yaml
+  #     - --location=${_CLOUDSDK_COMPUTE_ZONE}
+  #     - --cluster=${_CLOUDSDK_CONTAINER_CLUSTER}
+  #   id: "deploy-ingress"
+  #   waitFor: ["deploy-pvc"]
   - name: "gcr.io/cloud-builders/gke-deploy"
     args:
       - run
@@ -50,7 +50,7 @@ steps:
       - --location=${_CLOUDSDK_COMPUTE_ZONE}
       - --cluster=${_CLOUDSDK_CONTAINER_CLUSTER}
     id: "deploy-server"
-    waitFor: ["push-server", "deploy-ingress"]
+    waitFor: ["push-server"]
   - name: "gcr.io/cloud-builders/gke-deploy"
     args:
       - run
@@ -58,6 +58,6 @@ steps:
       - --image=gcr.io/$PROJECT_ID/client:$SHORT_SHA
       - --location=${_CLOUDSDK_COMPUTE_ZONE}
       - --cluster=${_CLOUDSDK_CONTAINER_CLUSTER}
-    id: "deploy-client"
-    waitFor: ["push-client", "deploy-server"]
+    # id: "deploy-client"
+    # waitFor: ["push-client", "deploy-server"]
 timeout: 1800s

@@ -18,7 +18,7 @@ export interface ErrorResponse {
 }
 
 export interface AuthResponse {
-  id: string;
+  user: User;
   token: string;
 }
 

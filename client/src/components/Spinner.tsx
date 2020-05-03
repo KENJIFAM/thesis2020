@@ -1,6 +1,6 @@
 import React from 'react';
 import { makeStyles, Theme, createStyles } from '@material-ui/core/styles';
-import { CircularProgress } from '@material-ui/core';
+import { CircularProgress, Box } from '@material-ui/core';
 
 interface Props {
   size?: number;
@@ -9,9 +9,9 @@ interface Props {
 const Spinner = ({ size = 64 }: Props) => {
   const classes = useStyles(size);
   return (
-    <div className={classes.root}>
-      <CircularProgress></CircularProgress>
-    </div>
+    <Box className={classes.root}>
+      <CircularProgress />
+    </Box>
   );
 };
 

@@ -22,10 +22,10 @@ import { RootState } from '../../store/rootReducer';
 import { logOut } from '../../store/authSlice';
 
 const MENUS = [
-  { path: '/', label: 'Home', auth: false },
-  { path: '/requests', label: 'Requests', auth: true },
-  { path: '/messages', label: 'Messages', auth: true },
-  { path: '/about', label: 'About us', auth: false },
+  { path: '/', label: 'Home' },
+  { path: '/requests', label: 'Requests' },
+  { path: '/messages', label: 'Messages' },
+  { path: '/profile', label: 'Profile' },
 ];
 
 const Navbar = () => {
@@ -52,24 +52,29 @@ const Navbar = () => {
 
   const renderLinks = () => (
     <List className={classes.list}>
-      {MENUS.filter((item) => !item.auth || isLoggedIn).map((item) => (
-        <ListItem
-          key={item.label}
-          className={classNames(classes.listItem, pathname === item.path && classes.listItemActive)}
-          onClick={() => {
-            setMobileOpen(false);
-            history.push(item.path);
-          }}
-        >
-          {item.label}
-        </ListItem>
-      ))}
       {isLoggedIn ? (
-        <ListItem className={classes.listItem}>
-          <Button variant="outlined" color="primary" onClick={handleLogOut}>
-            Log out
-          </Button>
-        </ListItem>
+        <>
+          {MENUS.map((item) => (
+            <ListItem
+              key={item.label}
+              className={classNames(
+                classes.listItem,
+                pathname === item.path && classes.listItemActive,
+              )}
+              onClick={() => {
+                setMobileOpen(false);
+                history.push(item.path);
+              }}
+            >
+              {item.label}
+            </ListItem>
+          ))}
+          <ListItem className={classes.listItem}>
+            <Button variant="outlined" color="primary" onClick={handleLogOut}>
+              Log out
+            </Button>
+          </ListItem>
+        </>
       ) : (
         <>
           <ListItem className={classes.listItem}>
@@ -97,7 +102,7 @@ const Navbar = () => {
             className={classes.brand}
             onClick={() => history.push('/')}
           >
-            Food Help
+            Food Supporter
           </Typography>
           <Hidden smDown implementation="css">
             {renderLinks()}

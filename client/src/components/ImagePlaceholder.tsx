@@ -1,6 +1,7 @@
 import React from 'react';
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
 import classNames from 'classnames';
+import { Box } from '@material-ui/core';
 
 interface Props {
   title?: string;
@@ -9,7 +10,7 @@ interface Props {
 }
 
 const ImagePlaceHolder = (props: Props) => (
-  <div className={classNames(useStyles(props).image, props.className)} />
+  <Box className={classNames(useStyles(props).image, props.className)} />
 );
 
 const useStyles = makeStyles((theme: Theme) =>

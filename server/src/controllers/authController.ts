@@ -18,7 +18,8 @@ router.post('/login', async (req, res, next) => {
       return next({ status: 401, message: 'Incorrect password!' });
     }
     const token = await user.generateJwt(next);
-    return res.status(200).json({ id: user.id, token });
+    const { id, orgName, orgType } = user;
+    return res.status(200).json({ user: { id, email, orgName, orgType }, token });
   } catch (err) {
     return next(err);
   }
@@ -28,7 +29,8 @@ router.post('/signup', async (req, res, next) => {
   try {
     const user = await db.User.create(req.body);
     const token = await user.generateJwt(next);
-    return res.status(200).json({ id: user.id, token });
+    const { id, email, orgName, orgType } = user;
+    return res.status(200).json({ user: { id, email, orgName, orgType }, token });
   } catch (err) {
     if (err.code === 11000) {
       err.message = 'Email is existed!';

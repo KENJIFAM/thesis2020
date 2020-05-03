@@ -2,6 +2,7 @@ import React, { useEffect, useRef } from 'react';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import { Box, List } from '@material-ui/core';
+import classNames from 'classnames';
 import { fetchMessages } from '../../store/messagesSlice';
 import { RootState } from '../../store/rootReducer';
 import Spinner from '../../components/Spinner';
@@ -43,7 +44,7 @@ const ChatArea = () => {
 
   if (authLoading || messagesLoading) {
     return (
-      <Box className={classes.spinner}>
+      <Box className={classNames(classes.root, classes.spinner)}>
         <Spinner />
       </Box>
     );
@@ -82,7 +83,6 @@ const useStyles = makeStyles((theme: Theme) =>
       overflowY: 'auto',
     },
     spinner: {
-      display: 'flex',
       justifyContent: 'center',
       alignItems: 'center',
       height: '100%',
