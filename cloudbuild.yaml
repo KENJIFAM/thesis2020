@@ -1,26 +1,54 @@
 steps:
-  # build images
+  # build test images
+  - id: "build-test"
+    name: "gcr.io/cloud-builders/docker"
+    args:
+      [
+        "build",
+        "-t",
+        "gcr.io/$PROJECT_ID/client-test:$SHORT_SHA",
+        "-f",
+        "./client/Dockerfile.dev",
+        "./client",
+      ]
+
+  # run tests
+  - id: "run-tests"
+    waitFor: ["build-test"]
+    name: "gcr.io/cloud-builders/docker"
+    args:
+      [
+        "run",
+        "gcr.io/$PROJECT_ID/client-test:$SHORT_SHA",
+        "yarn",
+        "test",
+        "--",
+        "--coverage",
+      ]
+
+  # build production images
   - id: "build-server"
+    waitFor: ["run-tests"]
     name: "gcr.io/cloud-builders/docker"
     args: ["build", "-t", "gcr.io/$PROJECT_ID/server:$SHORT_SHA", "./server"]
   - id: "build-client"
-    waitFor: ["-"]
+    waitFor: ["run-tests"]
     name: "gcr.io/cloud-builders/docker"
     args: ["build", "-t", "gcr.io/$PROJECT_ID/client:$SHORT_SHA", "./client"]
 
-  # push images
-  - name: "gcr.io/cloud-builders/docker"
-    args: ["push", "gcr.io/$PROJECT_ID/server:$SHORT_SHA"]
-    id: "push-server"
+  # push new images
+  - id: "push-server"
     waitFor: ["build-server"]
-  - name: "gcr.io/cloud-builders/docker"
-    args: ["push", "gcr.io/$PROJECT_ID/client:$SHORT_SHA"]
-    id: "push-client"
+    name: "gcr.io/cloud-builders/docker"
+    args: ["push", "gcr.io/$PROJECT_ID/server:$SHORT_SHA"]
+  - id: "push-client"
     waitFor: ["build-client"]
+    name: "gcr.io/cloud-builders/docker"
+    args: ["push", "gcr.io/$PROJECT_ID/client:$SHORT_SHA"]
 
   # deploy to GKE
   - id: "deploy-configs"
-    waitFor: ["-"]
+    waitFor: ["run-tests"]
     name: "gcr.io/cloud-builders/gke-deploy"
     args:
       - run

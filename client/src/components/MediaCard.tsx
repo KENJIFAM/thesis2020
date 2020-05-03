@@ -44,6 +44,8 @@ const useStyles = makeStyles((theme: Theme) =>
       height: '100%',
       flexDirection: 'column',
       alignItems: 'stretch',
+      display: 'flex',
+      justifyContent: 'stretch',
     },
     mediaContainer: {
       width: '100%',
