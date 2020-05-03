@@ -33,7 +33,7 @@ steps:
     name: "gcr.io/cloud-builders/gke-deploy"
     args:
       - run
-      - --filename=./k8s/server-deployment-service.yaml
+      - --filename=./k8s/server-deployment.yaml
       - --image=gcr.io/$PROJECT_ID/server:$SHORT_SHA
       - --output=./server
       - --location=${_CLOUDSDK_COMPUTE_ZONE}
@@ -43,7 +43,7 @@ steps:
     name: "gcr.io/cloud-builders/gke-deploy"
     args:
       - run
-      - --filename=./k8s/client-deployment-service.yaml
+      - --filename=./k8s/client-deployment.yaml
       - --image=gcr.io/$PROJECT_ID/client:$SHORT_SHA
       - --output=./client
       - --location=${_CLOUDSDK_COMPUTE_ZONE}
