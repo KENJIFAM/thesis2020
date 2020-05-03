@@ -21,8 +21,7 @@ steps:
         "run",
         "gcr.io/$PROJECT_ID/client-test:$SHORT_SHA",
         "yarn",
-        "test",
-        "--",
+        "test:CI",
         "--coverage",
       ]
 
