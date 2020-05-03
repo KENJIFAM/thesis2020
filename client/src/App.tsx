@@ -35,7 +35,7 @@ const App = () => {
               <Route path="/profile" component={Profile} />
             </>
           )}
-          {/* <Redirect to="/" /> */}
+          <Redirect to="/" />
         </Switch>
       </Layout>
     </Router>

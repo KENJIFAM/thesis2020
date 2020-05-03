@@ -7,11 +7,14 @@ import LinkButton from '../../components/LinkButton';
 import { fetchRequests, deleteRequest } from '../../store/requestsSlice';
 import { RootState } from '../../store/rootReducer';
 import RequestCard from '../../components/RequestCard';
-import { Request } from '../../services/types';
+import { Request, User } from '../../services/types';
 import Spinner from '../../components/Spinner';
 
+const mapOrgTypeToReqType = (orgType: User['orgType'] = 'SUPERMARKET'): Request['reqType'] =>
+  orgType === 'SUPERMARKET' ? 'need' : 'offer';
+
 const Requests = () => {
-  const [tab, setTab] = useState<Request['reqType']>('offer');
+  const [tab, setTab] = useState(0);
   const classes = useStyles();
   const dispatch = useDispatch();
   const { isLoggedIn, isLoading: authLoading, user } = useSelector(
@@ -22,8 +25,10 @@ const Requests = () => {
     (state: RootState) => state.requests,
     shallowEqual,
   );
-  const requestsToRender = Object.entries(requests).filter(
-    ([id, request]) => request.reqType === tab,
+  const requestsToRender = Object.entries(requests).filter(([id, request]) =>
+    tab === 0
+      ? request.reqType === mapOrgTypeToReqType(user?.orgType)
+      : request.user.id === user?.id,
   );
 
   useEffect(() => {
@@ -42,12 +47,12 @@ const Requests = () => {
         value={tab}
         indicatorColor="primary"
         textColor="primary"
-        onChange={(e, newTab: Request['reqType']) => setTab(newTab)}
+        onChange={(e, newTab: number) => setTab(newTab)}
         variant="fullWidth"
         centered
       >
-        <Tab value="offer" label="Offers" />
-        <Tab value="need" label="Needs" />
+        <Tab label={user?.orgType === 'SUPERMARKET' ? 'Supports' : 'Offers'} />
+        <Tab label="Your requests" />
       </Tabs>
     </Paper>
   );
