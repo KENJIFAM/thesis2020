@@ -54,9 +54,9 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     media: {
       position: 'absolute',
-      top: 0,
+      top: '-45%',
       width: '100%',
-      height: '100%',
+      height: '145%',
       overflow: 'hidden',
       backgroundColor: theme.palette.common.black,
       backgroundPosition: 'center',
